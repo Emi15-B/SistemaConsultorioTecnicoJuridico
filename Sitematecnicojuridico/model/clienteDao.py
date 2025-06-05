@@ -26,12 +26,12 @@ def editarDatoCliente(persona, idPersona):
 
 def guardarDatoCliente(persona):
    conexion =  ConexionDB()
-   # Ajustar el SQL para incluir fecha_registro y hora_registro si existen
+   # Solo los campos que existen en la tabla Cliente
    sql =  f"""INSERT INTO Cliente (nombre, apellido, documId, email, telefono,
-          nacionalidad, residencia, asunto, estatus, activo, fecha_registro, hora_registro) VALUES
+          nacionalidad, residencia, asunto, estatus, activo) VALUES
             ('{persona.nombre}','{persona.apellido}',{persona.documId},
             '{persona.email}','{persona.telefono}','{persona.nacionalidad}','{persona.residencia}',
-            '{persona.asunto}','{persona.estatus}',1,'{persona.fecha_registro}','{persona.hora_registro}')"""
+            '{persona.asunto}','{persona.estatus}',1)"""
 
    try:
         conexion.cursor.execute(sql)
@@ -40,7 +40,7 @@ def guardarDatoCliente(persona):
         mensaje = 'Cliente registrado exitosamente'
         messagebox.showinfo(title, mensaje)
    except Exception as e:
-        print("ERROR al ejecutar SQL:", e)  # <-- Esto imprime el error en consola para que puedas verlo
+        print("ERROR al ejecutar SQL:", e)
         title = 'Registrar Clientee'
         mensaje = f'Error al registrar cliente: {str(e)}'
         messagebox.showerror(title, mensaje)
@@ -93,7 +93,7 @@ def eliminarCliente(id):
       
 class Persona:
     def __init__(self, nombre,apellido,documId,email,telefono,
-                 nacionalidad,residencia,asunto,estatus,fecha_registro=None,hora_registro=None):
+                 nacionalidad,residencia,asunto,estatus):
         self.idPersona = None
         self.nombre = nombre
         self.apellido = apellido
@@ -104,11 +104,9 @@ class Persona:
         self.residencia = residencia
         self.asunto = asunto
         self.estatus = estatus
-        self.fecha_registro = fecha_registro
-        self.hora_registro = hora_registro
 
     def __str__(self):
-        return f'Persona[{self.nombre}, {self.apellido},{self.documId}, {self.email}, {self.telefono}, {self.nacionalidad}, {self.residencia}, {self.asunto},{self.estatus}, {self.fecha_registro}, {self.hora_registro}]'    
+        return f'Persona[{self.nombre}, {self.apellido},{self.documId}, {self.email}, {self.telefono}, {self.nacionalidad}, {self.residencia}, {self.asunto},{self.estatus}]'    
 
     __all__ = ['Persona', 'guardarDatoCliente']
 

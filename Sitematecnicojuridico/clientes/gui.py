@@ -22,6 +22,7 @@ class Frame (tk.Frame):
         self.camposCliente()
         self.deshabilitar()
         self.tablaCliente()
+        self.agregar_logo_empresa()  # Mostrar el logo al iniciar
         
 
     def camposCliente(self):
@@ -353,6 +354,73 @@ class Frame (tk.Frame):
                         if fecha_historia == fecha:
                             tree_fecha.insert('', 'end', values=(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], fecha_historia))
         btn_buscar.config(command=buscar_por_fecha)
+
+        # --- BOTÓN DE DESCARGA CON OPCIONES DE FORMATO ---
+        frame_export = tk.Frame(ventana)
+        frame_export.pack(fill='x', pady=5)
+        btn_descargar = Button(frame_export, text='Descargar Reporte', bg='#00396F', fg='#C5EAFE', command=lambda: mostrar_opciones_descarga())
+        btn_descargar.pack(side='left', padx=5)
+
+        def mostrar_opciones_descarga():
+            top = Toplevel(ventana)
+            top.title('Selecciona el formato de descarga')
+            top.geometry('300x150')
+            Label(top, text='Elige el formato:', font=('Arial', 12)).pack(pady=10)
+            Button(top, text='PNG', width=15, command=lambda: [exportar_png(ventana), top.destroy()]).pack(pady=5)
+            Button(top, text='CSV', width=15, command=lambda: [exportar_csv(), top.destroy()]).pack(pady=5)
+            Button(top, text='Excel', width=15, command=lambda: [exportar_excel(), top.destroy()]).pack(pady=5)
+
+        def generar_nombre_archivo(base, ext):
+            fecha = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+            return f"{base}_{fecha}.{ext}"
+
+        def exportar_png(win):
+            try:
+                from PIL import ImageGrab
+                x = win.winfo_rootx()
+                y = win.winfo_rooty()
+                w = win.winfo_width()
+                h = win.winfo_height()
+                img = ImageGrab.grab(bbox=(x, y, x + w, y + h))
+                nombre = generar_nombre_archivo("reporte", "png")
+                img.save(nombre)
+                messagebox.showinfo("Exportar PNG", f"Reporte guardado como {nombre}")
+            except Exception as e:
+                messagebox.showerror("Error", f"No se pudo exportar PNG: {e}")
+
+        def exportar_csv():
+            try:
+                import pandas as pd
+                tab = notebook.nametowidget(notebook.select())
+                tree = next((w for w in tab.winfo_children() if isinstance(w, ttk.Treeview)), None)
+                if not tree:
+                    messagebox.showerror("Error", "No se encontró la tabla para exportar.")
+                    return
+                data = [tree.item(item)['values'] for item in tree.get_children()]
+                cols = [tree.heading(col)["text"] for col in tree["columns"]]
+                df = pd.DataFrame(data, columns=cols)
+                nombre = generar_nombre_archivo("reporte", "csv")
+                df.to_csv(nombre, index=False)
+                messagebox.showinfo("Exportar CSV", f"Reporte guardado como {nombre}")
+            except Exception as e:
+                messagebox.showerror("Error", f"No se pudo exportar CSV: {e}")
+
+        def exportar_excel():
+            try:
+                import pandas as pd
+                tab = notebook.nametowidget(notebook.select())
+                tree = next((w for w in tab.winfo_children() if isinstance(w, ttk.Treeview)), None)
+                if not tree:
+                    messagebox.showerror("Error", "No se encontró la tabla para exportar.")
+                    return
+                data = [tree.item(item)['values'] for item in tree.get_children()]
+                cols = [tree.heading(col)["text"] for col in tree["columns"]]
+                df = pd.DataFrame(data, columns=cols)
+                nombre = generar_nombre_archivo("reporte", "xlsx")
+                df.to_excel(nombre, index=False)
+                messagebox.showinfo("Exportar Excel", f"Reporte guardado como {nombre}")
+            except Exception as e:
+                messagebox.showerror("Error", f"No se pudo exportar Excel: {e}")
 
     def editarCliente(self):
         # Permite editar el cliente seleccionado in la tabla
@@ -854,6 +922,21 @@ class Frame (tk.Frame):
             if historias:
                 return id_historia  # O ajusta según tu modelo
         return None
+
+    def agregar_logo_empresa(self):
+        # Cargar y mostrar el logo en la parte vacía inferior derecha de la ventana principal
+        try:
+            from PIL import Image, ImageTk
+            logo_path = 'logo_empresa.png'  # Cambia el nombre si tu logo tiene otro nombre
+            img = Image.open(logo_path)
+            img = img.resize((300, 300), Image.LANCZOS)
+            self.logo_img = ImageTk.PhotoImage(img)
+            # Coloca el logo en la parte inferior derecha, ajusta x/y según tu layout
+            self.lblLogo = tk.Label(self, image=self.logo_img, bg='#CDD8FF')
+            self.lblLogo.image = self.logo_img
+            self.lblLogo.place(x=850, y=140)  # Ajusta estos valores para mover el logo
+        except Exception as e:
+            print(f"No se pudo cargar el logo: {e}")
 
     def salir(self):
         self.root.destroy()
