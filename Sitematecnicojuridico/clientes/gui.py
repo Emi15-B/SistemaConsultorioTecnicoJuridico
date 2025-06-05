@@ -425,10 +425,16 @@ class Frame (tk.Frame):
     def editarCliente(self):
         # Permite editar el cliente seleccionado in la tabla
         seleccionado = self.treeClientes.focus()
+        print(f"DEBUG editarCliente: seleccionado={seleccionado}")
         if not seleccionado:
             messagebox.showwarning('Editar Cliente', 'Seleccione un cliente de la tabla.')
             return
         valores = self.treeClientes.item(seleccionado, 'values')
+        print(f"DEBUG editarCliente: valores={valores}")
+        if not valores or len(valores) < 10:
+            messagebox.showerror('Editar Cliente', 'No se pudieron obtener los datos del cliente seleccionado.')
+            return
+        self.habilitar()  # Habilitar primero
         self.svId.set(valores[0])
         self.svNombre.set(valores[1])
         self.svApellido.set(valores[2])
@@ -439,288 +445,20 @@ class Frame (tk.Frame):
         self.svResidencia.set(valores[7])
         self.svAsunto.set(valores[8])
         self.svEstatus.set(valores[9])
-        self.habilitar()
         self.btnGuardar.config(command=self.actualizarCliente)
 
     def actualizarCliente(self):
         # Actualiza el cliente editado
+        # Validar que ningún campo esté vacío y que el ID sea válido
+        if not self.svId.get() or not self.svNombre.get() or not self.svApellido.get() or not self.svDocumId.get():
+            messagebox.showwarning('Actualizar Cliente', 'Debe seleccionar un cliente y completar todos los campos obligatorios.')
+            return
         try:
             persona = Persona(
                 self.svNombre.get(), self.svApellido.get(), self.svDocumId.get(), self.svEmail.get(), self.svTelefono.get(),
-                self.svNacionalidad.get(), self.svResidencia.get(), self.svAsunto.get(), self.svEstatus.get(), self.svId.get()
+                self.svNacionalidad.get(), self.svResidencia.get(), self.svAsunto.get(), self.svEstatus.get()
             )
-            editarDatoCliente(persona)
-            self.deshabilitar()
-            self.tablaCliente()
-            self.btnGuardar.config(command=self.guardarCliente)
-        except Exception as e:
-            messagebox.showerror('Error', f'Error al actualizar cliente: {e}')
-
-    def eliminarCliente(self):
-        # Elimina el cliente seleccionado
-        seleccionado = self.treeClientes.focus()
-        if not seleccionado:
-            messagebox.showwarning('Eliminar Cliente', 'Seleccione un cliente de la tabla.')
-            return
-        valores = self.treeClientes.item(seleccionado, 'values')
-        respuesta = messagebox.askyesno('Eliminar Cliente', f'¿Está seguro de eliminar al cliente {valores[1]} {valores[2]}?')
-        if respuesta:
-            eliminarCliente(valores[0])
-            self.tablaCliente()
-
-    def abrirHistoriaCliente(self):
-        # Muestra la historia del cliente seleccionado
-        seleccionado = self.treeClientes.focus()
-        if not seleccionado:
-            messagebox.showwarning('Historia Cliente', 'Seleccione un cliente de la tabla.')
-            return
-        valores = self.treeClientes.item(seleccionado, 'values')
-        id_cliente = valores[0]
-        ventana = Toplevel(self)
-        ventana.title(f'Historia de {valores[1]} {valores[2]}')
-        ventana.geometry('900x500')
-        # Actualizar columnas: Id, Motivo, Tipo de Consulta, Detalle, Fecha
-        tree = ttk.Treeview(ventana, columns=("Id", "Motivo", "Tipo de Consulta", "Detalle", "Fecha"), show="headings")
-        tree.heading("Id", text="Id")
-        tree.heading("Motivo", text="Motivo")
-        tree.heading("Tipo de Consulta", text="Tipo de Consulta")
-        tree.heading("Detalle", text="Detalle")
-        tree.heading("Fecha", text="Fecha")
-        tree.column("Id", width=60)
-        tree.column("Motivo", width=150)
-        tree.column("Tipo de Consulta", width=150)
-        tree.column("Detalle", width=350)
-        tree.column("Fecha", width=120)
-        tree.pack(fill='both', expand=True)
-        # --- BOTONES DE HISTORIAL ---
-        frame_botones = tk.Frame(ventana, bg='#CDD8FF')
-        frame_botones.pack(fill='x', pady=10)
-        btn_agregar = tk.Button(frame_botones, text='Agregar Historia', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=lambda: self.agregarHistoria(id_cliente, tree, ventana))
-        btn_agregar.pack(side='left', padx=10)
-        btn_editar = tk.Button(frame_botones, text='Editar Historia', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=lambda: self.editarHistoria(tree, ventana))
-        btn_editar.pack(side='left', padx=10)
-        btn_eliminar = tk.Button(frame_botones, text='Eliminar Historia', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=lambda: self.eliminarHistoria(tree, ventana))
-        btn_eliminar.pack(side='left', padx=10)
-        btn_salir = tk.Button(frame_botones, text='Salir', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=ventana.destroy)
-        btn_salir.pack(side='right', padx=10)
-        # --- LLENAR TABLA DESPUÉS DE LOS BOTONES ---
-        historias = listarHistoria(id_cliente)
-        for h in historias:
-            # h: (id, motivo, tipoConsulta, detalle, fecha)
-            if len(h) > 5:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], h[5]))
-            else:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], ''))
-
-    def agregarHistoria(self, id_cliente, tree, ventana):
-        def guardar():
-            motivo = entry_motivo.get()
-            tipo = entry_tipo.get()
-            detalle = entry_detalle.get("1.0", "end").strip()
-            fecha = entry_fecha.get() if hasattr(entry_fecha, 'get') else ''
-            if not motivo or not tipo or not detalle or not fecha:
-                from tkinter import messagebox
-                messagebox.showwarning('Campos requeridos', 'Debe completar todos los campos.')
-                return
-            from model.historiaConsultaDao import guardarHistoria
-            guardarHistoria(id_cliente, motivo, tipo, detalle, fecha)
-            top.destroy()
-            self.refrescar_historial(tree, id_cliente)
-        from tkinter import Toplevel, Label, Entry, Text, Button
-        try:
-            from tkcalendar import DateEntry
-        except ImportError:
-            DateEntry = None
-        top = Toplevel(ventana)
-        top.title('Agregar Historia')
-        top.geometry('500x420')
-        Label(top, text='Motivo:', font=('Arial', 12)).pack(pady=5)
-        entry_motivo = Entry(top, font=('Arial', 12))
-        entry_motivo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Tipo de Consulta:', font=('Arial', 12)).pack(pady=5)
-        entry_tipo = Entry(top, font=('Arial', 12))
-        entry_tipo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Detalle:', font=('Arial', 12)).pack(pady=5)
-        entry_detalle = Text(top, font=('Arial', 12), height=5)
-        entry_detalle.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Fecha:', font=('Arial', 12)).pack(pady=5)
-        if DateEntry:
-            entry_fecha = DateEntry(top, font=('Arial', 12), date_pattern='yyyy-mm-dd')
-        else:
-            entry_fecha = Entry(top, font=('Arial', 12))
-        entry_fecha.pack(pady=5, fill='x', padx=20)
-        Button(top, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD').pack(pady=15)
-
-    def editarHistoria(self, tree, ventana):
-        seleccionado = tree.focus()
-        if not seleccionado:
-            from tkinter import messagebox
-            messagebox.showwarning('Editar Historia', 'Seleccione una historia de la tabla.')
-            return
-        valores = tree.item(seleccionado, 'values')
-        id_historia = valores[0]
-        # Usar los valores directamente de la fila seleccionada
-        motivo_actual = valores[1] if len(valores) > 1 else ''
-        tipo_actual = valores[2] if len(valores) > 2 else ''
-        detalle_actual = valores[3] if len(valores) > 3 else ''
-        fecha_actual = valores[4] if len(valores) > 4 else ''
-        def guardar():
-            motivo = entry_motivo.get()
-            tipo = entry_tipo.get()
-            detalle = entry_detalle.get("1.0", "end").strip()
-            fecha = entry_fecha.get() if hasattr(entry_fecha, 'get') else ''
-            if not motivo or not tipo or not detalle or not fecha:
-                from tkinter import messagebox
-                messagebox.showwarning('Campos requeridos', 'Debe completar todos los campos.')
-                return
-            from model.historiaConsultaDao import editarHistoria
-            editarHistoria(motivo, tipo, detalle, fecha, id_historia)
-            top.destroy()
-            id_cliente = self.obtener_id_cliente_de_historial(tree)
-            self.refrescar_historial(tree, id_cliente)
-        from tkinter import Toplevel, Label, Entry, Text, Button
-        try:
-            from tkcalendar import DateEntry
-        except ImportError:
-            DateEntry = None
-        top = Toplevel(ventana)
-        top.title('Editar Historia')
-        top.geometry('500x420')
-        Label(top, text='Motivo:', font=('Arial', 12)).pack(pady=5)
-        entry_motivo = Entry(top, font=('Arial', 12))
-        entry_motivo.insert(0, motivo_actual)
-        entry_motivo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Tipo de Consulta:', font=('Arial', 12)).pack(pady=5)
-        entry_tipo = Entry(top, font=('Arial', 12))
-        entry_tipo.insert(0, tipo_actual)
-        entry_tipo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Detalle:', font=('Arial', 12)).pack(pady=5)
-        entry_detalle = Text(top, font=('Arial', 12), height=5)
-        entry_detalle.insert('1.0', detalle_actual)
-        entry_detalle.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Fecha:', font=('Arial', 12)).pack(pady=5)
-        if DateEntry:
-            entry_fecha = DateEntry(top, font=('Arial', 12), date_pattern='yyyy-mm-dd')
-            if fecha_actual:
-                try:
-                    entry_fecha.set_date(fecha_actual)
-                except Exception:
-                    entry_fecha.set_date('today')
-        else:
-            entry_fecha = Entry(top, font=('Arial', 12))
-            entry_fecha.insert(0, fecha_actual)
-        entry_fecha.pack(pady=5, fill='x', padx=20)
-        Button(top, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD').pack(pady=15)
-
-    def eliminarHistoria(self, tree, ventana):
-        seleccionado = tree.focus()
-        if not seleccionado:
-            messagebox.showwarning('Eliminar Historia', 'Seleccione una historia de la tabla.')
-            return
-        valores = tree.item(seleccionado, 'values')
-        id_historia = valores[0]
-        if messagebox.askyesno('Eliminar Historia', '¿Está seguro de eliminar esta historia?'):
-            from model.historiaConsultaDao import eliminarHistoria
-            eliminarHistoria(id_historia)
-            # Buscar el id_cliente del historial mostrado
-            id_cliente = self.obtener_id_cliente_de_historial(tree)
-            self.refrescar_historial(tree, id_cliente)
-
-    def refrescar_historial(self, tree, id_cliente):
-        # Refresca la tabla de historial tras agregar/editar/eliminar
-        for item in tree.get_children():
-            tree.delete(item)
-        historias = listarHistoria(id_cliente)
-        for h in historias:
-            # h: (id, motivo, tipoConsulta, detalle, fecha)
-            if len(h) > 5:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], h[5]))
-            else:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], ''))
-
-    def obtener_id_cliente_de_historial(self, tree):
-        # Busca el id_cliente a partir del primer registro mostrado (asume que todos son del mismo cliente)
-        items = tree.get_children()
-        if items:
-            id_historia = tree.item(items[0], 'values')[0]
-            from model.historiaConsultaDao import listarHistoria
-            # Buscar el id_cliente a partir de la historia (opcional: podrías guardar el id_cliente en la ventana)
-            # Aquí simplemente retornamos el id_cliente usado en la última consulta
-            # Si no hay historias, retorna None
-            historias = listarHistoria(id_historia)
-            if historias:
-                return id_historia  # O ajusta según tu modelo
-        return None
-
-    def tablaCliente(self, where=None):
-        # Muestra la tabla de clientes con datos reales desde la base de datos
-        if hasattr(self, 'treeClientes'):
-            self.treeClientes.destroy()
-        columnas = ("Id", "Nombre", "Apellido", "DocumId", "Email", "Telefono", "Nacionalidad", "Residencia", "Asunto", "Estatus")
-        self.treeClientes = ttk.Treeview(self, columns=columnas, show="headings")
-        for col in columnas:
-            self.treeClientes.heading(col, text=col)
-            self.treeClientes.column(col, width=120)
-        self.treeClientes.grid(row=13, column=0, columnspan=6, padx=10, pady=10)
-
-        # --- LLENAR TABLA CON DATOS ---
-        from model.clienteDao import listar, listarCondicion
-        if where:
-            clientes = listarCondicion(where)
-        else:
-            clientes = listar()
-        for c in clientes:
-            self.treeClientes.insert('', 'end', values=(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8]))
-
-        # --- BOTONES SECUNDARIOS (debajo de la tabla) ---
-        self.btnEditar = tk.Button(self, text='Editar Cliente', command=self.editarCliente)
-        self.btnEditar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
-        self.btnEditar.grid(row=15, column=0, padx=10, pady=15)
-
-        self.btnEliminar = tk.Button(self, text='Eliminar Cliente', command=self.eliminarCliente)
-        self.btnEliminar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
-        self.btnEliminar.grid(row=15, column=1, padx=10, pady=15)
-
-        self.btnHistoria = tk.Button(self, text='Historia Cliente', command=self.abrirHistoriaCliente)
-        self.btnHistoria.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
-        self.btnHistoria.grid(row=15, column=2, padx=10, pady=15)
-
-        self.btnReportes = tk.Button(self, text='Reportes', command=self.ventanaReportes)
-        self.btnReportes.config(width=15, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
-        self.btnReportes.grid(row=15, column=3, padx=10, pady=15)
-
-        self.btnSalir = tk.Button(self, text='Salir', command=self.salir)
-        self.btnSalir.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
-        self.btnSalir.grid(row=15, column=4, padx=10, pady=15)
-
-    def editarCliente(self):
-        # Permite editar el cliente seleccionado en la tabla
-        seleccionado = self.treeClientes.focus()
-        if not seleccionado:
-            messagebox.showwarning('Editar Cliente', 'Seleccione un cliente de la tabla.')
-            return
-        valores = self.treeClientes.item(seleccionado, 'values')
-        self.svId.set(valores[0])
-        self.svNombre.set(valores[1])
-        self.svApellido.set(valores[2])
-        self.svDocumId.set(valores[3])
-        self.svEmail.set(valores[4])
-        self.svTelefono.set(valores[5])
-        self.svNacionalidad.set(valores[6])
-        self.svResidencia.set(valores[7])
-        self.svAsunto.set(valores[8])
-        self.svEstatus.set(valores[9])
-        self.habilitar()
-        self.btnGuardar.config(command=self.actualizarCliente)
-
-    def actualizarCliente(self):
-        # Actualiza el cliente editado
-        try:
-            persona = Persona(
-                self.svNombre.get(), self.svApellido.get(), self.svDocumId.get(), self.svEmail.get(), self.svTelefono.get(),
-                self.svNacionalidad.get(), self.svResidencia.get(), self.svAsunto.get(), self.svEstatus.get(), self.svId.get()
-            )
-            editarDatoCliente(persona)
+            editarDatoCliente(persona, self.svId.get())
             self.deshabilitar()
             self.tablaCliente()
             self.btnGuardar.config(command=self.guardarCliente)
@@ -941,3 +679,43 @@ class Frame (tk.Frame):
     def salir(self):
         self.root.destroy()
 
+    def tablaCliente(self, where=None):
+        # Muestra la tabla de clientes con datos reales desde la base de datos
+        if hasattr(self, 'treeClientes'):
+            self.treeClientes.destroy()
+        columnas = ("Id", "Nombre", "Apellido", "DocumId", "Email", "Telefono", "Nacionalidad", "Residencia", "Asunto", "Estatus")
+        self.treeClientes = ttk.Treeview(self, columns=columnas, show="headings")
+        for col in columnas:
+            self.treeClientes.heading(col, text=col)
+            self.treeClientes.column(col, width=120)
+        self.treeClientes.grid(row=13, column=0, columnspan=6, padx=10, pady=10)
+
+        # --- LLENAR TABLA CON DATOS ---
+        from model.clienteDao import listar, listarCondicion
+        if where:
+            clientes = listarCondicion(where)
+        else:
+            clientes = listar()
+        for c in clientes:
+            self.treeClientes.insert('', 'end', values=(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9]))
+
+        # --- BOTONES SECUNDARIOS (debajo de la tabla) ---
+        self.btnEditar = tk.Button(self, text='Editar Cliente', command=self.editarCliente)
+        self.btnEditar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnEditar.grid(row=15, column=0, padx=10, pady=15)
+
+        self.btnEliminar = tk.Button(self, text='Eliminar Cliente', command=self.eliminarCliente)
+        self.btnEliminar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnEliminar.grid(row=15, column=1, padx=10, pady=15)
+
+        self.btnHistoria = tk.Button(self, text='Historia Cliente', command=self.abrirHistoriaCliente)
+        self.btnHistoria.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnHistoria.grid(row=15, column=2, padx=10, pady=15)
+
+        self.btnReportes = tk.Button(self, text='Reportes', command=self.ventanaReportes)
+        self.btnReportes.config(width=15, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
+        self.btnReportes.grid(row=15, column=3, padx=10, pady=15)
+
+        self.btnSalir = tk.Button(self, text='Salir', command=self.salir)
+        self.btnSalir.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
+        self.btnSalir.grid(row=15, column=4, padx=10, pady=15)
