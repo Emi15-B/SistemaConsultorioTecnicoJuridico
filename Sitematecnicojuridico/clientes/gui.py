@@ -488,17 +488,17 @@ class Frame (tk.Frame):
         ventana = Toplevel(self)
         ventana.title(f'Historia de {valores[1]} {valores[2]}')
         ventana.geometry('900x500')
-        # Actualizar columnas: Id, Motivo, Tipo de Consulta, Detalle, Fecha
-        tree = ttk.Treeview(ventana, columns=("Id", "Motivo", "Tipo de Consulta", "Detalle", "Fecha"), show="headings")
+        # Actualizar columnas: Id, Nombre y Apellido, Atendido por, Observaciones, Fecha
+        tree = ttk.Treeview(ventana, columns=("Id", "Nombre y Apellido", "Atendido por", "Observaciones", "Fecha"), show="headings")
         tree.heading("Id", text="Id")
-        tree.heading("Motivo", text="Motivo")
-        tree.heading("Tipo de Consulta", text="Tipo de Consulta")
-        tree.heading("Detalle", text="Detalle")
-        tree.heading("Fecha", text="Fecha")
+        tree.heading("Nombre y Apellido", text="Nombre y Apellido")
+        tree.heading("Atendido por", text="Atendido por")
+        tree.heading("Observaciones", text="Observaciones")
+        tree.heading("Fecha", text="Fecha de registro")
         tree.column("Id", width=60)
-        tree.column("Motivo", width=150)
-        tree.column("Tipo de Consulta", width=150)
-        tree.column("Detalle", width=350)
+        tree.column("Nombre y Apellido", width=180)
+        tree.column("Atendido por", width=180)
+        tree.column("Observaciones", width=400)
         tree.column("Fecha", width=120)
         tree.pack(fill='both', expand=True)
         # --- BOTONES DE HISTORIAL ---
@@ -515,24 +515,25 @@ class Frame (tk.Frame):
         # --- LLENAR TABLA DESPUÉS DE LOS BOTONES ---
         historias = listarHistoria(id_cliente)
         for h in historias:
-            # h: (id, motivo, tipoConsulta, detalle, fecha)
-            if len(h) > 5:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], h[5]))
+            # h: (idHistoriaConsulta, NombreCompleto, atendidoPor, observaciones, fecha)
+            if len(h) > 4:
+                tree.insert('', 'end', values=(h[0], h[1], h[2], h[3], h[4]))
             else:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], ''))
+                tree.insert('', 'end', values=(h[0], h[1], h[2], h[3], h[4] if len(h) > 3 else ''))
 
     def agregarHistoria(self, id_cliente, tree, ventana):
         def guardar():
-            motivo = entry_motivo.get()
-            tipo = entry_tipo.get()
-            detalle = entry_detalle.get("1.0", "end").strip()
+            btn_guardar.config(state='disabled')  # Deshabilita el botón para evitar doble click
+            atendido_por = entry_atendido_por.get()
+            observaciones = entry_observaciones.get("1.0", "end").strip()
             fecha = entry_fecha.get() if hasattr(entry_fecha, 'get') else ''
-            if not motivo or not tipo or not detalle or not fecha:
+            if not atendido_por or not observaciones or not fecha:
                 from tkinter import messagebox
                 messagebox.showwarning('Campos requeridos', 'Debe completar todos los campos.')
+                btn_guardar.config(state='normal')  # Rehabilita si hay error
                 return
             from model.historiaConsultaDao import guardarHistoria
-            guardarHistoria(id_cliente, motivo, tipo, detalle, fecha)
+            guardarHistoria(id_cliente, atendido_por, observaciones, fecha)
             top.destroy()
             self.refrescar_historial(tree, id_cliente)
         from tkinter import Toplevel, Label, Entry, Text, Button
@@ -542,23 +543,43 @@ class Frame (tk.Frame):
             DateEntry = None
         top = Toplevel(ventana)
         top.title('Agregar Historia')
-        top.geometry('500x420')
-        Label(top, text='Motivo:', font=('Arial', 12)).pack(pady=5)
-        entry_motivo = Entry(top, font=('Arial', 12))
-        entry_motivo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Tipo de Consulta:', font=('Arial', 12)).pack(pady=5)
-        entry_tipo = Entry(top, font=('Arial', 12))
-        entry_tipo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Detalle:', font=('Arial', 12)).pack(pady=5)
-        entry_detalle = Text(top, font=('Arial', 12), height=5)
-        entry_detalle.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Fecha:', font=('Arial', 12)).pack(pady=5)
+        top.geometry('500x400')
+        # --- CAMPO NOMBRE Y APELLIDO (deshabilitado) ---
+        Label(top, text='Nombre y Apellido:', font=('Arial', 12)).pack(pady=5)
+        entry_nombre_apellido = Entry(top, font=('Arial', 12), state='normal')
+        # Buscar nombre y apellido del cliente
+        persona = None
+        for c in self.treeClientes.get_children():
+            if str(self.treeClientes.item(c, 'values')[0]) == str(id_cliente):
+                persona = self.treeClientes.item(c, 'values')
+                break
+        if persona:
+            entry_nombre_apellido.insert(0, f"{persona[1]} {persona[2]}")
+            entry_nombre_apellido.config(state='readonly', disabledbackground='#f0f0f0', disabledforeground='#000000')
+        entry_nombre_apellido.pack(pady=5, fill='x', padx=20)
+        # --- CAMPO ATENDIDO POR ---
+        Label(top, text='Atendido por:', font=('Arial', 12)).pack(pady=5)
+        entry_atendido_por = Entry(top, font=('Arial', 12))
+        entry_atendido_por.pack(pady=5, fill='x', padx=20)
+        entry_atendido_por.delete(0, END)  # Asegura que siempre esté vacío
+        # --- CAMPO OBSERVACIONES ---
+        Label(top, text='Observaciones:', font=('Arial', 12)).pack(pady=5)
+        entry_observaciones = Text(top, font=('Arial', 12), height=5)
+        entry_observaciones.pack(pady=5, fill='x', padx=20)
+        # --- CAMPO FECHA DE REGISTRO ---
+        Label(top, text='Fecha de registro:', font=('Arial', 12)).pack(pady=5)
         if DateEntry:
             entry_fecha = DateEntry(top, font=('Arial', 12), date_pattern='yyyy-mm-dd')
         else:
             entry_fecha = Entry(top, font=('Arial', 12))
         entry_fecha.pack(pady=5, fill='x', padx=20)
-        Button(top, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD').pack(pady=15)
+        # --- BOTONES GUARDAR Y CANCELAR ---
+        frame_botones = tk.Frame(top)
+        frame_botones.pack(side='bottom', pady=20)
+        btn_guardar = Button(frame_botones, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD', width=12)
+        btn_guardar.pack(side='left', padx=10)
+        btn_cancelar = Button(frame_botones, text='Cancelar', command=top.destroy, bg='#888888', fg='white', width=12)
+        btn_cancelar.pack(side='left', padx=10)
 
     def editarHistoria(self, tree, ventana):
         seleccionado = tree.focus()
@@ -568,58 +589,84 @@ class Frame (tk.Frame):
             return
         valores = tree.item(seleccionado, 'values')
         id_historia = valores[0]
-        # Usar los valores directamente de la fila seleccionada
-        motivo_actual = valores[1] if len(valores) > 1 else ''
-        tipo_actual = valores[2] if len(valores) > 2 else ''
-        detalle_actual = valores[3] if len(valores) > 3 else ''
+        atendido_actual = valores[2] if len(valores) > 2 else ''
+        observaciones_actual = valores[3] if len(valores) > 3 else ''
         fecha_actual = valores[4] if len(valores) > 4 else ''
         def guardar():
-            motivo = entry_motivo.get()
-            tipo = entry_tipo.get()
-            detalle = entry_detalle.get("1.0", "end").strip()
+            atendido_por = entry_atendido_por.get()
+            observaciones = entry_observaciones.get("1.0", "end").strip()
             fecha = entry_fecha.get() if hasattr(entry_fecha, 'get') else ''
-            if not motivo or not tipo or not detalle or not fecha:
+            if not atendido_por or not observaciones or not fecha:
                 from tkinter import messagebox
                 messagebox.showwarning('Campos requeridos', 'Debe completar todos los campos.')
                 return
             from model.historiaConsultaDao import editarHistoria
-            editarHistoria(motivo, tipo, detalle, fecha, id_historia)
+            editarHistoria(atendido_por, observaciones, fecha, id_historia)
             top.destroy()
-            id_cliente = self.obtener_id_cliente_de_historial(tree)
-            self.refrescar_historial(tree, id_cliente)
-        from tkinter import Toplevel, Label, Entry, Text, Button
+            self.refrescar_historial(tree, self.id_cliente_historial(tree, id_historia))
+        from tkinter import Toplevel, Label, Entry, Text, Button, Frame
+        import tkinter as tk
         try:
             from tkcalendar import DateEntry
         except ImportError:
             DateEntry = None
         top = Toplevel(ventana)
         top.title('Editar Historia')
-        top.geometry('500x420')
-        Label(top, text='Motivo:', font=('Arial', 12)).pack(pady=5)
-        entry_motivo = Entry(top, font=('Arial', 12))
-        entry_motivo.insert(0, motivo_actual)
-        entry_motivo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Tipo de Consulta:', font=('Arial', 12)).pack(pady=5)
-        entry_tipo = Entry(top, font=('Arial', 12))
-        entry_tipo.insert(0, tipo_actual)
-        entry_tipo.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Detalle:', font=('Arial', 12)).pack(pady=5)
-        entry_detalle = Text(top, font=('Arial', 12), height=5)
-        entry_detalle.insert('1.0', detalle_actual)
-        entry_detalle.pack(pady=5, fill='x', padx=20)
-        Label(top, text='Fecha:', font=('Arial', 12)).pack(pady=5)
+        top.geometry('500x400')
+        # --- CAMPO NOMBRE Y APELLIDO (habilitado pero no editable) ---
+        Label(top, text='Nombre y Apellido:', font=('Arial', 12)).pack(pady=5)
+        entry_nombre_apellido = Entry(top, font=('Arial', 12), state='normal')
+        # Obtener nombre y apellido del cliente seleccionado en la tabla principal
+        persona = None
+        for c in self.treeClientes.get_children():
+            if str(self.treeClientes.item(c, 'values')[0]) == str(self.id_cliente_historial(tree, id_historia)):
+                persona = self.treeClientes.item(c, 'values')
+                break
+        if persona:
+            entry_nombre_apellido.insert(0, f"{persona[1]} {persona[2]}")
+            entry_nombre_apellido.config(state='readonly', disabledbackground='#f0f0f0', disabledforeground='#000000')
+        entry_nombre_apellido.pack(pady=5, fill='x', padx=20)
+        # --- CAMPO ATENDIDO POR (dejar vacío) ---
+        Label(top, text='Atendido por:', font=('Arial', 12)).pack(pady=5)
+        entry_atendido_por = Entry(top, font=('Arial', 12))
+        entry_atendido_por.pack(pady=5, fill='x', padx=20)
+        entry_atendido_por.delete(0, END)  # Siempre vacío al abrir
+        # --- CAMPO OBSERVACIONES ---
+        Label(top, text='Observaciones:', font=('Arial', 12)).pack(pady=5)
+        entry_observaciones = Text(top, font=('Arial', 12), height=5)
+        entry_observaciones.insert('1.0', observaciones_actual)
+        entry_observaciones.pack(pady=5, fill='x', padx=20)
+        # --- CAMPO FECHA DE REGISTRO ---
+        Label(top, text='Fecha de registro:', font=('Arial', 12)).pack(pady=5)
         if DateEntry:
             entry_fecha = DateEntry(top, font=('Arial', 12), date_pattern='yyyy-mm-dd')
             if fecha_actual:
                 try:
                     entry_fecha.set_date(fecha_actual)
                 except Exception:
-                    entry_fecha.set_date('today')
+                    import datetime
+                    entry_fecha.set_date(datetime.date.today())
         else:
             entry_fecha = Entry(top, font=('Arial', 12))
             entry_fecha.insert(0, fecha_actual)
         entry_fecha.pack(pady=5, fill='x', padx=20)
-        Button(top, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD').pack(pady=15)
+        # --- BOTONES GUARDAR Y CANCELAR ---
+        frame_botones = tk.Frame(top)
+        frame_botones.pack(side='bottom', pady=20)
+        btn_guardar = Button(frame_botones, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD', width=12)
+        btn_guardar.pack(side='left', padx=10)
+        btn_cancelar = Button(frame_botones, text='Cancelar', command=top.destroy, bg='#888888', fg='white', width=12)
+        btn_cancelar.pack(side='left', padx=10)
+
+    def id_cliente_historial(self, tree, id_historia):
+        # Busca el id_cliente a partir del id_historia
+        from model.conexion import ConexionDB
+        conexion = ConexionDB()
+        sql = 'SELECT idPersona FROM historiaConsulta WHERE idHistoriaConsulta = ?'
+        conexion.cursor.execute(sql, (id_historia,))
+        row = conexion.cursor.fetchone()
+        conexion.cerrarConexion()
+        return row[0] if row else None
 
     def eliminarHistoria(self, tree, ventana):
         seleccionado = tree.focus()
@@ -629,10 +676,9 @@ class Frame (tk.Frame):
         valores = tree.item(seleccionado, 'values')
         id_historia = valores[0]
         if messagebox.askyesno('Eliminar Historia', '¿Está seguro de eliminar esta historia?'):
-            from model.historiaConsultaDao import eliminarHistoria
             eliminarHistoria(id_historia)
             # Buscar el id_cliente del historial mostrado
-            id_cliente = self.obtener_id_cliente_de_historial(tree)
+            id_cliente = self.id_cliente_historial(tree, id_historia)
             self.refrescar_historial(tree, id_cliente)
 
     def refrescar_historial(self, tree, id_cliente):
@@ -641,11 +687,12 @@ class Frame (tk.Frame):
             tree.delete(item)
         historias = listarHistoria(id_cliente)
         for h in historias:
-            # h: (id, motivo, tipoConsulta, detalle, fecha)
-            if len(h) > 5:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], h[5]))
+            # h: (idHistoriaConsulta, NombreCompleto, atendidoPor, observaciones, fecha)
+            # Tabla espera: Id, Nombre y Apellido, Atendido por, Observaciones, Fecha
+            if len(h) > 4:
+                tree.insert('', 'end', values=(h[0], h[1], h[2], h[3], h[4]))
             else:
-                tree.insert('', 'end', values=(h[0], h[2], h[3], h[4], ''))
+                tree.insert('', 'end', values=(h[0], h[1], h[2], h[3], h[4] if len(h) > 3 else ''))
 
     def obtener_id_cliente_de_historial(self, tree):
         # Busca el id_cliente a partir del primer registro mostrado (asume que todos son del mismo cliente)
@@ -654,7 +701,7 @@ class Frame (tk.Frame):
             id_historia = tree.item(items[0], 'values')[0]
             from model.historiaConsultaDao import listarHistoria
             # Buscar el id_cliente a partir de la historia (opcional: podrías guardar el id_cliente en la ventana)
-            # Aquí simplemente retornamos el id_cliente usado en la última consulta
+            # Aquí simplemente retornamos el id_historia usado en la última consulta
             # Si no hay historias, retorna None
             historias = listarHistoria(id_historia)
             if historias:

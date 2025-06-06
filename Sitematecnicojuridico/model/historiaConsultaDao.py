@@ -20,15 +20,13 @@ ensure_fecha_column()
 
 def listarHistoria(idPersona):
     idpersona = int(idPersona)
-    print(f"[DEBUG] idPersona recibido: {idPersona} (convertido: {idPersona})")
     conexion = ConexionDB()
     listaHistoria = []
     sql = '''
     SELECT h.idHistoriaConsulta,
            c.nombre || " " || c.apellido AS NombreCompleto,
-           h.motivo,
-           h.tipoConsulta,
-           h.detalle,
+           h.atendidoPor,
+           h.observaciones,
            h.fecha
     FROM historiaConsulta h
     INNER JOIN Cliente c ON c.idPersona = h.idPersona
@@ -49,12 +47,12 @@ def listarHistoria(idPersona):
     return listaHistoria
 
 
-def guardarHistoria(idPersona, motivo, tipoConsulta, detalle, fecha):
+def guardarHistoria(idPersona, atendidoPor, observaciones, fecha):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO historiaConsulta (idPersona, motivo, tipoConsulta, detalle, fecha) VALUES
-            (?, ?, ?, ?, ?)"""
+    sql = f"""INSERT INTO historiaConsulta (idPersona, atendidoPor, observaciones, fecha) VALUES
+            (?, ?, ?, ?)"""
     try:
-        conexion.cursor.execute(sql, (idPersona, motivo, tipoConsulta, detalle, fecha))
+        conexion.cursor.execute(sql, (idPersona, atendidoPor, observaciones, fecha))
         conexion.cerrarConexion()
         title = 'Registro Historia Consulta'
         mensaje = 'Historia registrada exitosamente'
@@ -80,12 +78,12 @@ def eliminarHistoria(idHistoriaConsulta):
         mensaje = f'Error al eliminar historia:\n{str(e)}'
         messagebox.showerror(title, mensaje)
 
-def editarHistoria(motivo, tipoConsulta, detalle, fecha, idHistoriaConsulta):
+def editarHistoria(atendidoPor, observaciones, fecha, idHistoriaConsulta):
     conexion = ConexionDB()
-    sql = f"""UPDATE historiaConsulta SET motivo = ?, tipoConsulta = ?, detalle = ?, fecha = ? 
+    sql = f"""UPDATE historiaConsulta SET atendidoPor = ?, observaciones = ?, fecha = ? 
               WHERE idHistoriaConsulta = ?"""
     try:
-        conexion.cursor.execute(sql, (motivo, tipoConsulta, detalle, fecha, idHistoriaConsulta))
+        conexion.cursor.execute(sql, (atendidoPor, observaciones, fecha, idHistoriaConsulta))
         conexion.cerrarConexion()
         title = 'Editar Historia'
         mensaje = 'Historia editada exitosamente'
