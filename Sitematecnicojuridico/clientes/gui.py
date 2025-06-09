@@ -709,7 +709,7 @@ class Frame (tk.Frame):
         return None
 
     def agregar_logo_empresa(self):
-        # Cargar y mostrar el logo en la parte vacía inferior derecha de la ventana principal
+        # Cargar y mostrar el logo in la parte vacía inferior derecha de la ventana principal
         try:
             from PIL import Image, ImageTk
             logo_path = 'logo_empresa.png'  # Cambia el nombre si tu logo tiene otro nombre
@@ -766,3 +766,141 @@ class Frame (tk.Frame):
         self.btnSalir = tk.Button(self, text='Salir', command=self.salir)
         self.btnSalir.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
         self.btnSalir.grid(row=15, column=4, padx=10, pady=15)
+
+class MenuPrincipal(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title('Menú Principal - Consultorio Técnico/Jurídico')
+        self.geometry('1100x700')
+        self.config(bg='#CDD8FF')
+        self._crear_widgets()
+
+    def _crear_widgets(self):
+        from PIL import Image, ImageTk
+        # --- Barra lateral igual que en 'Agregar Cliente' ---
+        self.sidebar = tk.Frame(self, bg='#00396F', width=260)
+        self.sidebar.pack(side='left', fill='y')
+        try:
+            logo_path = 'logo_empresa.png'
+            img = Image.open(logo_path)
+            img = img.resize((120, 120), Image.LANCZOS)
+            self.logo_img = ImageTk.PhotoImage(img)
+            lbl_logo = tk.Label(self.sidebar, image=self.logo_img, bg='#00396F')
+            lbl_logo.pack(pady=(40, 20))
+        except Exception:
+            lbl_logo = tk.Label(self.sidebar, text='[Logo]', font=('Arial', 18, 'bold'), bg='#00396F', fg='#C5EAFE')
+            lbl_logo.pack(pady=(40, 20))
+        btn_menu1 = tk.Button(self.sidebar, text='Ingresar Nuevo Cliente', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.mostrar_nuevo_cliente)
+        btn_menu1.pack(pady=8)
+        btn_menu2 = tk.Button(self.sidebar, text='Lista de Clientes', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.mostrar_lista_clientes)
+        btn_menu2.pack(pady=8)
+        btn_menu3 = tk.Button(self.sidebar, text='Reportes', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.mostrar_reportes)
+        btn_menu3.pack(pady=8)
+        btn_menu4 = tk.Button(self.sidebar, text='Salir', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.destroy)
+        btn_menu4.pack(pady=8)
+        # --- Panel central ---
+        self.central_frame = tk.Frame(self, bg='#CDD8FF')
+        self.central_frame.pack(side='left', fill='both', expand=True)
+        self.mostrar_info_institucional()
+
+    def limpiar_central(self):
+        for widget in self.central_frame.winfo_children():
+            widget.destroy()
+
+    def mostrar_info_institucional(self):
+        self.limpiar_central()
+        inner = tk.Frame(self.central_frame, bg='#CDD8FF')
+        inner.place(relx=0.5, rely=0.5, anchor='center')
+        tk.Label(inner, text='OFICINA TÉCNICO - JURÍDICA', font=('Arial', 28, 'bold'), bg='#CDD8FF', fg='#00396F').pack(pady=(0, 20))
+        tk.Label(inner, text='¿Qué es?', font=('Arial', 18, 'bold'), bg='#CDD8FF', fg='#00396F').pack(anchor='w')
+        tk.Label(inner, text='La Oficina Técnico-Jurídica es un espacio de atención y asesoría en temas legales y tecnológicos.', font=('Arial', 14), bg='#CDD8FF', wraplength=700, justify='left').pack(anchor='w', pady=(0, 15))
+        tk.Label(inner, text='¿Para qué funciona?', font=('Arial', 18, 'bold'), bg='#CDD8FF', fg='#00396F').pack(anchor='w')
+        tk.Label(inner, text='Brindamos orientación, consultoría y acompañamiento en protección de datos, derecho digital, ciberseguridad, y más.', font=('Arial', 14), bg='#CDD8FF', wraplength=700, justify='left').pack(anchor='w', pady=(0, 15))
+        tk.Label(inner, text='¿A quiénes está dirigido?', font=('Arial', 18, 'bold'), bg='#CDD8FF', fg='#00396F').pack(anchor='w')
+        tk.Label(inner, text='Empresas, emprendedores, profesionales, estudiantes y cualquier persona interesada en el ámbito legal y tecnológico.', font=('Arial', 14), bg='#CDD8FF', wraplength=700, justify='left').pack(anchor='w', pady=(0, 15))
+
+    def mostrar_nuevo_cliente(self):
+        self.limpiar_central()
+        from tkinter import ttk, messagebox
+        labels = ['Nombre', 'Apellido', 'DocumId', 'Email', 'Telefono', 'Nacionalidad', 'Residencia', 'Asunto', 'Estatus']
+        entries = {}
+        inner_frame = tk.Frame(self.central_frame, bg='#CDD8FF')
+        inner_frame.place(relx=0.5, rely=0.5, anchor='center')
+        for idx, label in enumerate(labels):
+            tk.Label(inner_frame, text=label+':', font=('Arial', 15, 'bold'), bg='#CDD8FF').grid(row=idx, column=0, padx=20, pady=14, sticky='e')
+            if label in ['Nacionalidad', 'Asunto', 'Estatus']:
+                if label == 'Nacionalidad':
+                    nacionalidades = [
+                        'Argentina', 'Bolivia', 'Brasil', 'Chile', 'Colombia', 'Ecuador', 'Paraguay', 'Perú', 'Uruguay', 'Venezuela',
+                        'México', 'España', 'Estados Unidos', 'Otro'
+                    ]
+                    entry = ttk.Combobox(inner_frame, values=nacionalidades, font=('Arial', 15), width=38)
+                elif label == 'Asunto':
+                    asuntos = [
+                        'Asesoría en Protección de Datos para empresas',
+                        'Buenas Prácticas Digitales en el Puesto de Trabajo',
+                        'Seguridad de la Información-Ciberseguridad',
+                        'Auditorías de Sistemas de Información',
+                        'Compliance',
+                        'Adecuación al marco normativo y práctico',
+                        'Aspectos legales y fiscales',
+                        'Responsabilidad jurídica de los prestadores de servicios para Internet',
+                        'Apps: Política de privacidad, términos y condiciones',
+                        'Consultoría Derecho Digital',
+                        'Adecuación legal de Proyectos Digitales',
+                        'Propiedad intelectual (marcas) en entornos  digitales',
+                        'Nombres de dominio',
+                        'eCommerce',
+                        'Reputación Digital',
+                        'Derechos de la personalidad en entornos digitales',
+                        'Social media',
+                        'Gestión jurídica y de comunicación de crisis en entorno digital',
+                        'Identidad corporativa y publicidad online',
+                        'Derecho Penal Informático',
+                        'Estafas (phishing – pharming)',
+                        'Revelación de secretos empresariales',
+                        'Vulneración de la intimidad',
+                        'Amenazas y extorsiones'
+                    ]
+                    entry = ttk.Combobox(inner_frame, values=asuntos, font=('Arial', 15), width=38)
+                else:
+                    estatuses = ['Activo', 'En proceso', 'Terminado']
+                    entry = ttk.Combobox(inner_frame, values=estatuses, font=('Arial', 15), width=38, state='readonly')
+            else:
+                entry = tk.Entry(inner_frame, font=('Arial', 15), width=40)
+            entry.grid(row=idx, column=1, padx=10, pady=14, sticky='w')
+            entries[label] = entry
+        # --- Botones Guardar y Cancelar centrados ---
+        btns_frame = tk.Frame(inner_frame, bg='#CDD8FF')
+        btns_frame.grid(row=11, column=0, columnspan=2, pady=30)
+        btn_guardar = tk.Button(btns_frame, text='Guardar', font=('Arial', 15, 'bold'), bg='#00396F', fg='#C5EAFE', width=14, command=lambda: guardar())
+        btn_guardar.pack(side='left', padx=30)
+        btn_cancelar = tk.Button(btns_frame, text='Cancelar', font=('Arial', 15, 'bold'), bg='#888888', fg='white', width=14, command=self.mostrar_info_institucional)
+        btn_cancelar.pack(side='left', padx=30)
+        def guardar():
+            from model.clienteDao import Persona, guardarDatoCliente
+            datos = [entries[l].get() for l in labels]
+            if not all(datos):
+                messagebox.showwarning('Campos requeridos', 'Debe completar todos los campos.')
+                return
+            persona = Persona(*datos)
+            guardarDatoCliente(persona)
+            messagebox.showinfo('Éxito', 'Cliente registrado correctamente.')
+            self.mostrar_info_institucional()
+
+    def mostrar_lista_clientes(self):
+        self.limpiar_central()
+        frame = Frame(self.central_frame)
+        frame.pack(fill='both', expand=True)
+        frame.tablaCliente()
+
+    def mostrar_reportes(self):
+        self.limpiar_central()
+        frame = Frame(self.central_frame)
+        frame.pack(fill='both', expand=True)
+        frame.ventanaReportes()
+
+# Cambiar el flujo de inicio para mostrar el menú principal
+if __name__ == '__main__':
+    menu = MenuPrincipal()
+    menu.mainloop()
