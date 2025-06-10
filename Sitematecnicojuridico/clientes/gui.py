@@ -12,12 +12,25 @@ except ImportError:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'tkcalendar'])
     from tkcalendar import DateEntry
 import datetime
+
+# === PALETA Y FUENTES CORPORATIVAS ===
+COLOR_PRIMARIO = '#2A5F8A'  # Azul corporativo
+COLOR_SECUNDARIO = '#F5F5F5'  # Gris claro
+COLOR_TARJETA = 'white'
+COLOR_VERDE = '#4CAF50'  # Guardar
+COLOR_ROJO = '#F44336'   # Eliminar
+FUENTE_TITULO = ('Segoe UI', 18, 'bold')
+FUENTE_TITULO_GRANDE = ('Segoe UI', 28, 'bold')
+FUENTE_LABEL = ('Segoe UI', 15, 'bold')
+FUENTE_CONTENIDO = ('Segoe UI', 14)
+FUENTE_BOTON = ('Segoe UI', 12, 'bold')
+
 class Frame (tk.Frame):
     def __init__(self, root):
 
         super().__init__(root,width=1280,height=720)
         self.root = root            #modificacion de codigo 
-        self.config(bg='#CDD8FF') 
+        self.config(bg=COLOR_SECUNDARIO) 
         self.pack()
         self.camposCliente()
         self.deshabilitar()
@@ -27,79 +40,79 @@ class Frame (tk.Frame):
 
     def camposCliente(self):
         self.lblId = tk.Label(self, text='Id: ')
-        self.lblId.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblId.config (font=('ARIAL',15, 'bold'),bg=COLOR_SECUNDARIO ) 
         self.lblId.grid(column=0,row=0, padx=10, pady=5)
 
         self.lblNombre = tk.Label(self, text='Nombre: ')
-        self.lblNombre.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblNombre.config (font=('ARIAL',15, 'bold'),bg=COLOR_SECUNDARIO ) 
         self.lblNombre.grid(column=0,row=1, padx=10, pady=5)
 
         self.lblApellido = tk.Label(self, text='Apellido: ')
-        self.lblApellido.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblApellido.config (font=('ARIAL',15, 'bold'),bg=COLOR_SECUNDARIO ) 
         self.lblApellido.grid(column=0, row=2, padx=10, pady=5)
 
         self.lblDocumId= tk.Label(self, text='DocumId: ')
-        self.lblDocumId.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblDocumId.config (font=('ARIAL',15, 'bold'),bg=COLOR_SECUNDARIO ) 
         self.lblDocumId.grid(column=0, row=3, padx=10, pady=5)
 
         self.lblEmail = tk.Label(self, text='Email: ')
-        self.lblEmail.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblEmail.config (font=('ARIAL',15, 'bold'),bg=COLOR_SECUNDARIO ) 
         self.lblEmail.grid(column=0, row=4, padx=10, pady=5)
 
         self.lblTelefono = tk.Label(self, text='Telefono: ')
-        self.lblTelefono.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblTelefono.config(font=FUENTE_LABEL, bg=COLOR_SECUNDARIO)
         self.lblTelefono.grid(column=0, row=5, padx=10, pady=5)
 
         self.lblNacionalidad = tk.Label(self, text='Nacionalidad: ')
-        self.lblNacionalidad.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblNacionalidad.config(font=FUENTE_LABEL, bg=COLOR_SECUNDARIO)
         self.lblNacionalidad.grid(column=0, row=6, padx=10, pady=5)
 
         self.lblResidencia = tk.Label(self, text='Residencia: ')
-        self.lblResidencia.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblResidencia.config(font=FUENTE_LABEL, bg=COLOR_SECUNDARIO)
         self.lblResidencia.grid(column=0, row=7, padx=10, pady=5)
 
         self.svResidencia = tk.StringVar()
         self.entryResidencia = tk.Entry(self, textvariable=self.svResidencia)
-        self.entryResidencia.config(width=50, font=('ARIAL',15))
+        self.entryResidencia.config(width=50, font=FUENTE_CONTENIDO)
         self.entryResidencia.grid(column=1, row=7, padx=10, pady=5, columnspan=2)
 
         self.lblAsunto = tk.Label(self, text='Asunto: ')
-        self.lblAsunto.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblAsunto.config(font=FUENTE_LABEL, bg=COLOR_SECUNDARIO)
         self.lblAsunto.grid(column=0, row=8, padx=10, pady=5)
 
         self.lblEstatus = tk.Label(self, text='Estatus: ')
-        self.lblEstatus.config (font=('ARIAL',15, 'bold'),bg='#CDD8FF' ) 
+        self.lblEstatus.config(font=FUENTE_LABEL, bg=COLOR_SECUNDARIO)
         self.lblEstatus.grid(column=0, row=9, padx=10, pady=5)
 
         #Entradas
         self.svId = tk.StringVar()
         self.entryId = tk.Entry(self, textvariable=self.svId)
-        self.entryId.config(width=50, font=('ARIAL',15))
+        self.entryId.config(width=50, font=FUENTE_CONTENIDO)
         self.entryId.grid(column=1, row=0, padx=10, pady=5, columnspan=2)
 
         self.svNombre = tk.StringVar()
         self.entryNombre = tk.Entry(self, textvariable=self.svNombre)
-        self.entryNombre.config(width=50, font=('ARIAL',15))
+        self.entryNombre.config(width=50, font=FUENTE_CONTENIDO)
         self.entryNombre.grid(column=1, row=1, padx=10, pady=5, columnspan=2)
 
         self.svApellido = tk.StringVar()
         self.entryApellido = tk.Entry(self, textvariable=self.svApellido)
-        self.entryApellido.config(width=50, font=('ARIAL',15))
+        self.entryApellido.config(width=50, font=FUENTE_CONTENIDO)
         self.entryApellido.grid(column=1, row=2, padx=10, pady=5, columnspan=2)
 
         self.svDocumId = tk.StringVar()
         self.entryDocumId = tk.Entry(self, textvariable=self.svDocumId)
-        self.entryDocumId.config(width=50, font=('ARIAL',15))
+        self.entryDocumId.config(width=50, font=FUENTE_CONTENIDO)
         self.entryDocumId.grid(column=1, row=3, padx=10, pady=5, columnspan=2)
 
         self.svEmail = tk.StringVar()
         self.entryEmail = tk.Entry(self, textvariable=self.svEmail)
-        self.entryEmail.config(width=50, font=('ARIAL',15))
+        self.entryEmail.config(width=50, font=FUENTE_CONTENIDO)
         self.entryEmail.grid(column=1, row=4, padx=10, pady=5, columnspan=2)
 
         self.svTelefono = tk.StringVar()
         self.entryTelefono = tk.Entry(self, textvariable=self.svTelefono)
-        self.entryTelefono.config(width=50, font=('ARIAL',15))
+        self.entryTelefono.config(width=50, font=FUENTE_CONTENIDO)
         self.entryTelefono.grid(column=1, row=5, padx=10, pady=5, columnspan=2)
 
         # --- Combobox Nacionalidad ---
@@ -170,47 +183,45 @@ class Frame (tk.Frame):
 
         # --- BOTONES PRINCIPALES (arriba de la tabla) ---
         self.btnNuevo = tk.Button(self, text='Nuevo', command=self.habilitar)
-        self.btnNuevo.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnNuevo.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, cursor='hand2', activebackground='#3A7DBA')
         self.btnNuevo.grid(row=11, column=0, padx=10, pady=10)
 
         self.btnGuardar = tk.Button(self, text='Guardar', command=self.guardarCliente)
-        self.btnGuardar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnGuardar.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_VERDE, cursor='hand2', activebackground='#388E3C')
         self.btnGuardar.grid(row=11, column=1, padx=10, pady=10)
 
         self.btnCancelar = tk.Button(self, text='Cancelar', command=self.deshabilitar)
-        self.btnCancelar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnCancelar.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, cursor='hand2', activebackground='#3A7DBA')
         self.btnCancelar.grid(row=11, column=2, padx=10, pady=10)
 
         # --- BUSCADOR ---
         # LABEL BUSCADOR
         self.lblBuscardocumId = tk.Label(self, text='Buscar DocumId: ')
-        self.lblBuscardocumId.config(font=('ARIAl',15,'bold'), bg='#CDD8FF')
+        self.lblBuscardocumId.config(font=('ARIAl',15,'bold'), bg=COLOR_SECUNDARIO, fg=COLOR_PRIMARIO)
         self.lblBuscardocumId.grid(column=3, row=0, padx=10, pady=5)
 
         self.lblBuscarApellido = tk.Label(self, text='Buscar Apellido: ')
-        self.lblBuscarApellido.config(font=('ARIAl',15,'bold'), bg='#CDD8FF')
+        self.lblBuscarApellido.config(font=('ARIAl',15,'bold'), bg=COLOR_SECUNDARIO, fg=COLOR_PRIMARIO)
         self.lblBuscarApellido.grid(column=3, row=1, padx=10, pady=5)
 
           #ENTRYS BUSCADOR
         self.svBuscardocumId = tk.StringVar()
         self.entryBuscardocumId = tk.Entry(self, textvariable=self.svBuscardocumId)
-        self.entryBuscardocumId.config(width=20, font=('ARIAL',15))
+        self.entryBuscardocumId.config(width=20, font=FUENTE_CONTENIDO)
         self.entryBuscardocumId.grid(column=4, row=0, padx=10, pady=5, columnspan=2)
 
         self.svBuscarApellido = tk.StringVar()
         self.entryBuscarApellido = tk.Entry(self, textvariable=self.svBuscarApellido)
-        self.entryBuscarApellido.config(width=20, font=('ARIAL',15))
+        self.entryBuscarApellido.config(width=20, font=FUENTE_CONTENIDO)
         self.entryBuscarApellido.grid(column=4, row=1, padx=10, pady=5, columnspan=2)
 
          #BUTTON BUSCADOR
         self.btnBuscarCondicion = tk.Button(self, text='Buscar', command = self.buscarCondicion)
-        self.btnBuscarCondicion.config(width=20, font=('ARIAL',12,'bold'), fg='#DAD5D6', 
-                                bg='#00396F', cursor='hand2',activebackground='#5B8DBD')
+        self.btnBuscarCondicion.config(width=20, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, cursor='hand2', activebackground='#3A7DBA')
         self.btnBuscarCondicion.grid(column=3,row=2, padx=10, pady=5, columnspan=1)
 
         self.btnLimpiarBuscador = tk.Button(self, text='Limpiar', command = self.limpiarBuscador)
-        self.btnLimpiarBuscador.config(width=20, font=('ARIAL',12,'bold'), fg='#DAD5D6', 
-                                bg="#00396F", cursor='hand2',activebackground='#5B8DBD')
+        self.btnLimpiarBuscador.config(width=20, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, cursor='hand2', activebackground='#3A7DBA')
         self.btnLimpiarBuscador.grid(column=4,row=2, padx=10, pady=5, columnspan=1)
         
 
@@ -299,6 +310,7 @@ class Frame (tk.Frame):
         ventana = Toplevel(self)
         ventana.title('Reportes por Estatus y Fecha')
         ventana.geometry('1000x600')
+        ventana.config(bg=COLOR_SECUNDARIO)
         notebook = ttk.Notebook(ventana)
         notebook.pack(fill='both', expand=True)
 
@@ -328,12 +340,12 @@ class Frame (tk.Frame):
         # --- Nueva pestaña: Reporte por Fecha de Historia ---
         tab_fecha = ttk.Frame(notebook)
         notebook.add(tab_fecha, text='Por Fecha Registrado')
-        frame_filtros = tk.Frame(tab_fecha)
+        frame_filtros = tk.Frame(tab_fecha, bg=COLOR_TARJETA)
         frame_filtros.pack(fill='x', pady=10)
-        Label(frame_filtros, text='Fecha Registrado (YYYY-MM-DD):', font=('Arial', 12)).pack(side='left', padx=5)
-        entry_fecha = Entry(frame_filtros, font=('Arial', 12), width=15)
+        Label(frame_filtros, text='Fecha Registrado (YYYY-MM-DD):', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(side='left', padx=5)
+        entry_fecha = Entry(frame_filtros, font=FUENTE_CONTENIDO, width=15)
         entry_fecha.pack(side='left', padx=5)
-        btn_buscar = Button(frame_filtros, text='Buscar', font=('Arial', 12), bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD')
+        btn_buscar = Button(frame_filtros, text='Buscar', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', activebackground='#3A7DBA')
         btn_buscar.pack(side='left', padx=5)
         tree_fecha = ttk.Treeview(tab_fecha, columns=("Id", "Nombre", "Apellido", "DocumId", "Email", "Telefono", "Nacionalidad", "Residencia", "Asunto", "Fecha Historia"), show="headings")
         for col in ("Id", "Nombre", "Apellido", "DocumId", "Email", "Telefono", "Nacionalidad", "Residencia", "Asunto", "Fecha Historia"):
@@ -356,19 +368,20 @@ class Frame (tk.Frame):
         btn_buscar.config(command=buscar_por_fecha)
 
         # --- BOTÓN DE DESCARGA CON OPCIONES DE FORMATO ---
-        frame_export = tk.Frame(ventana)
+        frame_export = tk.Frame(ventana, bg=COLOR_SECUNDARIO)
         frame_export.pack(fill='x', pady=5)
-        btn_descargar = Button(frame_export, text='Descargar Reporte', bg='#00396F', fg='#C5EAFE', command=lambda: mostrar_opciones_descarga())
+        btn_descargar = Button(frame_export, text='Descargar Reporte', bg=COLOR_PRIMARIO, fg='white', font=FUENTE_BOTON, command=lambda: mostrar_opciones_descarga())
         btn_descargar.pack(side='left', padx=5)
 
         def mostrar_opciones_descarga():
             top = Toplevel(ventana)
             top.title('Selecciona el formato de descarga')
             top.geometry('300x150')
-            Label(top, text='Elige el formato:', font=('Arial', 12)).pack(pady=10)
-            Button(top, text='PNG', width=15, command=lambda: [exportar_png(ventana), top.destroy()]).pack(pady=5)
-            Button(top, text='CSV', width=15, command=lambda: [exportar_csv(), top.destroy()]).pack(pady=5)
-            Button(top, text='Excel', width=15, command=lambda: [exportar_excel(), top.destroy()]).pack(pady=5)
+            top.config(bg=COLOR_TARJETA)
+            Label(top, text='Elige el formato:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=10)
+            Button(top, text='PNG', width=15, font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', command=lambda: [exportar_png(ventana), top.destroy()]).pack(pady=5)
+            Button(top, text='CSV', width=15, font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', command=lambda: [exportar_csv(), top.destroy()]).pack(pady=5)
+            Button(top, text='Excel', width=15, font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', command=lambda: [exportar_excel(), top.destroy()]).pack(pady=5)
 
         def generar_nombre_archivo(base, ext):
             fecha = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -488,6 +501,7 @@ class Frame (tk.Frame):
         ventana = Toplevel(self)
         ventana.title(f'Historia de {valores[1]} {valores[2]}')
         ventana.geometry('900x500')
+        ventana.config(bg=COLOR_SECUNDARIO)
         # Actualizar columnas: Id, Nombre y Apellido, Atendido por, Observaciones, Fecha
         tree = ttk.Treeview(ventana, columns=("Id", "Nombre y Apellido", "Atendido por", "Observaciones", "Fecha"), show="headings")
         tree.heading("Id", text="Id")
@@ -502,15 +516,15 @@ class Frame (tk.Frame):
         tree.column("Fecha", width=120)
         tree.pack(fill='both', expand=True)
         # --- BOTONES DE HISTORIAL ---
-        frame_botones = tk.Frame(ventana, bg='#CDD8FF')
+        frame_botones = tk.Frame(ventana, bg=COLOR_SECUNDARIO)
         frame_botones.pack(fill='x', pady=10)
-        btn_agregar = tk.Button(frame_botones, text='Agregar Historia', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=lambda: self.agregarHistoria(id_cliente, tree, ventana))
+        btn_agregar = tk.Button(frame_botones, text='Agregar Historia', width=18, font=FUENTE_BOTON, fg='white', bg=COLOR_VERDE, activebackground='#388E3C', cursor='hand2', command=lambda: self.agregarHistoria(id_cliente, tree, ventana))
         btn_agregar.pack(side='left', padx=10)
-        btn_editar = tk.Button(frame_botones, text='Editar Historia', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=lambda: self.editarHistoria(tree, ventana))
+        btn_editar = tk.Button(frame_botones, text='Editar Historia', width=18, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, activebackground='#3A7DBA', cursor='hand2', command=lambda: self.editarHistoria(tree, ventana))
         btn_editar.pack(side='left', padx=10)
-        btn_eliminar = tk.Button(frame_botones, text='Eliminar Historia', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=lambda: self.eliminarHistoria(tree, ventana))
+        btn_eliminar = tk.Button(frame_botones, text='Eliminar Historia', width=18, font=FUENTE_BOTON, fg='white', bg=COLOR_ROJO, activebackground='#B71C1C', cursor='hand2', command=lambda: self.eliminarHistoria(tree, ventana))
         btn_eliminar.pack(side='left', padx=10)
-        btn_salir = tk.Button(frame_botones, text='Salir', width=18, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2', command=ventana.destroy)
+        btn_salir = tk.Button(frame_botones, text='Salir', width=18, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, activebackground='#3A7DBA', cursor='hand2', command=ventana.destroy)
         btn_salir.pack(side='right', padx=10)
         # --- LLENAR TABLA DESPUÉS DE LOS BOTONES ---
         historias = listarHistoria(id_cliente)
@@ -544,9 +558,10 @@ class Frame (tk.Frame):
         top = Toplevel(ventana)
         top.title('Agregar Historia')
         top.geometry('500x400')
+        top.config(bg=COLOR_TARJETA)
         # --- CAMPO NOMBRE Y APELLIDO (deshabilitado) ---
-        Label(top, text='Nombre y Apellido:', font=('Arial', 12)).pack(pady=5)
-        entry_nombre_apellido = Entry(top, font=('Arial', 12), state='normal')
+        Label(top, text='Nombre y Apellido:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
+        entry_nombre_apellido = Entry(top, font=FUENTE_CONTENIDO, state='normal')
         # Buscar nombre y apellido del cliente
         persona = None
         for c in self.treeClientes.get_children():
@@ -558,27 +573,27 @@ class Frame (tk.Frame):
             entry_nombre_apellido.config(state='readonly', disabledbackground='#f0f0f0', disabledforeground='#000000')
         entry_nombre_apellido.pack(pady=5, fill='x', padx=20)
         # --- CAMPO ATENDIDO POR ---
-        Label(top, text='Atendido por:', font=('Arial', 12)).pack(pady=5)
-        entry_atendido_por = Entry(top, font=('Arial', 12))
+        Label(top, text='Atendido por:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
+        entry_atendido_por = Entry(top, font=FUENTE_CONTENIDO)
         entry_atendido_por.pack(pady=5, fill='x', padx=20)
         entry_atendido_por.delete(0, END)  # Asegura que siempre esté vacío
         # --- CAMPO OBSERVACIONES ---
-        Label(top, text='Observaciones:', font=('Arial', 12)).pack(pady=5)
-        entry_observaciones = Text(top, font=('Arial', 12), height=5)
+        Label(top, text='Observaciones:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
+        entry_observaciones = Text(top, font=FUENTE_CONTENIDO, height=5)
         entry_observaciones.pack(pady=5, fill='x', padx=20)
         # --- CAMPO FECHA DE REGISTRO ---
-        Label(top, text='Fecha de registro:', font=('Arial', 12)).pack(pady=5)
+        Label(top, text='Fecha de registro:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
         if DateEntry:
-            entry_fecha = DateEntry(top, font=('Arial', 12), date_pattern='yyyy-mm-dd')
+            entry_fecha = DateEntry(top, font=FUENTE_CONTENIDO, date_pattern='yyyy-mm-dd')
         else:
-            entry_fecha = Entry(top, font=('Arial', 12))
+            entry_fecha = Entry(top, font=FUENTE_CONTENIDO)
         entry_fecha.pack(pady=5, fill='x', padx=20)
         # --- BOTONES GUARDAR Y CANCELAR ---
-        frame_botones = tk.Frame(top)
+        frame_botones = tk.Frame(top, bg=COLOR_TARJETA)
         frame_botones.pack(side='bottom', pady=20)
-        btn_guardar = Button(frame_botones, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD', width=12)
+        btn_guardar = Button(frame_botones, text='Guardar', command=guardar, bg=COLOR_VERDE, fg='white', font=FUENTE_BOTON, activebackground='#388E3C', width=12)
         btn_guardar.pack(side='left', padx=10)
-        btn_cancelar = Button(frame_botones, text='Cancelar', command=top.destroy, bg='#888888', fg='white', width=12)
+        btn_cancelar = Button(frame_botones, text='Cancelar', command=top.destroy, bg=COLOR_PRIMARIO, fg='white', font=FUENTE_BOTON, width=12)
         btn_cancelar.pack(side='left', padx=10)
 
     def editarHistoria(self, tree, ventana):
@@ -613,9 +628,10 @@ class Frame (tk.Frame):
         top = Toplevel(ventana)
         top.title('Editar Historia')
         top.geometry('500x400')
+        top.config(bg=COLOR_TARJETA)
         # --- CAMPO NOMBRE Y APELLIDO (habilitado pero no editable) ---
-        Label(top, text='Nombre y Apellido:', font=('Arial', 12)).pack(pady=5)
-        entry_nombre_apellido = Entry(top, font=('Arial', 12), state='normal')
+        Label(top, text='Nombre y Apellido:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
+        entry_nombre_apellido = Entry(top, font=FUENTE_CONTENIDO, state='normal')
         # Obtener nombre y apellido del cliente seleccionado en la tabla principal
         persona = None
         for c in self.treeClientes.get_children():
@@ -627,19 +643,19 @@ class Frame (tk.Frame):
             entry_nombre_apellido.config(state='readonly', disabledbackground='#f0f0f0', disabledforeground='#000000')
         entry_nombre_apellido.pack(pady=5, fill='x', padx=20)
         # --- CAMPO ATENDIDO POR (dejar vacío) ---
-        Label(top, text='Atendido por:', font=('Arial', 12)).pack(pady=5)
-        entry_atendido_por = Entry(top, font=('Arial', 12))
+        Label(top, text='Atendido por:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
+        entry_atendido_por = Entry(top, font=FUENTE_CONTENIDO)
         entry_atendido_por.pack(pady=5, fill='x', padx=20)
         entry_atendido_por.delete(0, END)  # Siempre vacío al abrir
         # --- CAMPO OBSERVACIONES ---
-        Label(top, text='Observaciones:', font=('Arial', 12)).pack(pady=5)
-        entry_observaciones = Text(top, font=('Arial', 12), height=5)
+        Label(top, text='Observaciones:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
+        entry_observaciones = Text(top, font=FUENTE_CONTENIDO, height=5)
         entry_observaciones.insert('1.0', observaciones_actual)
         entry_observaciones.pack(pady=5, fill='x', padx=20)
         # --- CAMPO FECHA DE REGISTRO ---
-        Label(top, text='Fecha de registro:', font=('Arial', 12)).pack(pady=5)
+        Label(top, text='Fecha de registro:', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA).pack(pady=5)
         if DateEntry:
-            entry_fecha = DateEntry(top, font=('Arial', 12), date_pattern='yyyy-mm-dd')
+            entry_fecha = DateEntry(top, font=FUENTE_CONTENIDO, date_pattern='yyyy-mm-dd')
             if fecha_actual:
                 try:
                     entry_fecha.set_date(fecha_actual)
@@ -647,15 +663,15 @@ class Frame (tk.Frame):
                     import datetime
                     entry_fecha.set_date(datetime.date.today())
         else:
-            entry_fecha = Entry(top, font=('Arial', 12))
+            entry_fecha = Entry(top, font=FUENTE_CONTENIDO)
             entry_fecha.insert(0, fecha_actual)
         entry_fecha.pack(pady=5, fill='x', padx=20)
         # --- BOTONES GUARDAR Y CANCELAR ---
-        frame_botones = tk.Frame(top)
+        frame_botones = tk.Frame(top, bg=COLOR_TARJETA)
         frame_botones.pack(side='bottom', pady=20)
-        btn_guardar = Button(frame_botones, text='Guardar', command=guardar, bg='#00396F', fg='#C5EAFE', activebackground='#5B8DBD', width=12)
+        btn_guardar = Button(frame_botones, text='Guardar', command=guardar, bg=COLOR_VERDE, fg='white', font=FUENTE_BOTON, activebackground='#388E3C', width=12)
         btn_guardar.pack(side='left', padx=10)
-        btn_cancelar = Button(frame_botones, text='Cancelar', command=top.destroy, bg='#888888', fg='white', width=12)
+        btn_cancelar = Button(frame_botones, text='Cancelar', command=top.destroy, bg=COLOR_PRIMARIO, fg='white', font=FUENTE_BOTON, width=12)
         btn_cancelar.pack(side='left', padx=10)
 
     def id_cliente_historial(self, tree, id_historia):
@@ -717,7 +733,7 @@ class Frame (tk.Frame):
             img = img.resize((300, 300), Image.LANCZOS)
             self.logo_img = ImageTk.PhotoImage(img)
             # Coloca el logo en la parte inferior derecha, ajusta x/y según tu layout
-            self.lblLogo = tk.Label(self, image=self.logo_img, bg='#CDD8FF')
+            self.lblLogo = tk.Label(self, image=self.logo_img, bg=COLOR_SECUNDARIO)
             self.lblLogo.image = self.logo_img
             self.lblLogo.place(x=850, y=140)  # Ajusta estos valores para mover el logo
         except Exception as e:
@@ -732,9 +748,12 @@ class Frame (tk.Frame):
             self.treeClientes.destroy()
         columnas = ("Id", "Nombre", "Apellido", "DocumId", "Email", "Telefono", "Nacionalidad", "Residencia", "Asunto", "Estatus")
         self.treeClientes = ttk.Treeview(self, columns=columnas, show="headings")
-        for col in columnas:
-            self.treeClientes.heading(col, text=col)
-            self.treeClientes.column(col, width=120)
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('Treeview', font=FUENTE_CONTENIDO, rowheight=28, background=COLOR_TARJETA, fieldbackground=COLOR_TARJETA)
+        style.configure('Treeview.Heading', font=FUENTE_LABEL, background=COLOR_PRIMARIO, foreground='white')
+        self.treeClientes.tag_configure('activo', background=COLOR_SECUNDARIO)
+        self.treeClientes.tag_configure('inactivo', background=COLOR_TARJETA)
         self.treeClientes.grid(row=13, column=0, columnspan=6, padx=10, pady=10)
 
         # --- LLENAR TABLA CON DATOS ---
@@ -744,27 +763,28 @@ class Frame (tk.Frame):
         else:
             clientes = listar()
         for c in clientes:
-            self.treeClientes.insert('', 'end', values=(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9]))
+            estado_tag = 'activo' if c[9] == 'Activo' else 'inactivo'
+            self.treeClientes.insert('', 'end', values=(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9]), tags=(estado_tag,))
 
         # --- BOTONES SECUNDARIOS (debajo de la tabla) ---
         self.btnEditar = tk.Button(self, text='Editar Cliente', command=self.editarCliente)
-        self.btnEditar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnEditar.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, cursor='hand2', activebackground='#3A7DBA')
         self.btnEditar.grid(row=15, column=0, padx=10, pady=15)
 
         self.btnEliminar = tk.Button(self, text='Eliminar Cliente', command=self.eliminarCliente)
-        self.btnEliminar.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnEliminar.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_ROJO, cursor='hand2', activebackground='#B71C1C')
         self.btnEliminar.grid(row=15, column=1, padx=10, pady=15)
 
         self.btnHistoria = tk.Button(self, text='Historia Cliente', command=self.abrirHistoriaCliente)
-        self.btnHistoria.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', cursor='hand2', activebackground='#5B8DBD')
+        self.btnHistoria.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, cursor='hand2', activebackground='#3A7DBA')
         self.btnHistoria.grid(row=15, column=2, padx=10, pady=15)
 
         self.btnReportes = tk.Button(self, text='Reportes', command=self.ventanaReportes)
-        self.btnReportes.config(width=15, font=('ARIAL',12,'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
+        self.btnReportes.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, activebackground='#3A7DBA', cursor='hand2')
         self.btnReportes.grid(row=15, column=3, padx=10, pady=15)
 
         self.btnSalir = tk.Button(self, text='Salir', command=self.salir)
-        self.btnSalir.config(width=15, font=('ARIAL',12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', cursor='hand2')
+        self.btnSalir.config(width=15, font=FUENTE_BOTON, fg='white', bg=COLOR_PRIMARIO, activebackground='#3A7DBA', cursor='hand2')
         self.btnSalir.grid(row=15, column=4, padx=10, pady=15)
 
 class MenuPrincipal(tk.Tk):
@@ -772,34 +792,75 @@ class MenuPrincipal(tk.Tk):
         super().__init__()
         self.title('Menú Principal - Consultorio Técnico/Jurídico')
         self.geometry('1100x700')
-        self.config(bg='#CDD8FF')
+        self.config(bg=COLOR_SECUNDARIO)
         self._crear_widgets()
 
     def _crear_widgets(self):
-        from PIL import Image, ImageTk
-        # --- Barra lateral igual que en 'Agregar Cliente' ---
-        self.sidebar = tk.Frame(self, bg='#00396F', width=260)
+        import os
+        # --- Barra lateral compacta con íconos + texto y efecto hover ---
+        self.sidebar = tk.Frame(self, bg=COLOR_PRIMARIO, width=80)
         self.sidebar.pack(side='left', fill='y')
+        # Cargar íconos (usar emojis si no hay imágenes)
+        icon_size = (28, 28)
         try:
-            logo_path = 'logo_empresa.png'
-            img = Image.open(logo_path)
-            img = img.resize((120, 120), Image.LANCZOS)
-            self.logo_img = ImageTk.PhotoImage(img)
-            lbl_logo = tk.Label(self.sidebar, image=self.logo_img, bg='#00396F')
-            lbl_logo.pack(pady=(40, 20))
+            from PIL import Image, ImageTk
+            def load_icon(filename):
+                path = os.path.join(os.path.dirname(__file__), '..', filename)
+                img = Image.open(path)
+                img = img.resize(icon_size, Image.LANCZOS)
+                return ImageTk.PhotoImage(img)
+            self.icon_nuevo = load_icon('icon_nuevo.png')
+            self.icon_lista = load_icon('icon_lista.png')
+            self.icon_reportes = load_icon('icon_reportes.png')
+            self.icon_salir = load_icon('icon_salir.png')
         except Exception:
-            lbl_logo = tk.Label(self.sidebar, text='[Logo]', font=('Arial', 18, 'bold'), bg='#00396F', fg='#C5EAFE')
-            lbl_logo.pack(pady=(40, 20))
-        btn_menu1 = tk.Button(self.sidebar, text='Ingresar Nuevo Cliente', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.mostrar_nuevo_cliente)
-        btn_menu1.pack(pady=8)
-        btn_menu2 = tk.Button(self.sidebar, text='Lista de Clientes', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.mostrar_lista_clientes)
-        btn_menu2.pack(pady=8)
-        btn_menu3 = tk.Button(self.sidebar, text='Reportes', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.mostrar_reportes)
-        btn_menu3.pack(pady=8)
-        btn_menu4 = tk.Button(self.sidebar, text='Salir', width=22, height=2, font=('Arial', 12, 'bold'), fg='#C5EAFE', bg='#00396F', activebackground='#5B8DBD', bd=0, cursor='hand2', command=self.destroy)
-        btn_menu4.pack(pady=8)
+            self.icon_nuevo = None
+            self.icon_lista = None
+            self.icon_reportes = None
+            self.icon_salir = None
+        # --- Botón helper con hover ---
+        def crear_boton_menu(parent, icon, texto, comando):
+            btn = tk.Frame(parent, bg=COLOR_PRIMARIO, cursor='hand2')
+            btn.pack(fill='x', pady=2)
+            def on_enter(e):
+                btn.config(bg='#3A7DBA')
+                lbl_icon.config(bg='#3A7DBA')
+                lbl_texto.config(bg='#3A7DBA')
+            def on_leave(e):
+                btn.config(bg=COLOR_PRIMARIO)
+                lbl_icon.config(bg=COLOR_PRIMARIO)
+                lbl_texto.config(bg=COLOR_PRIMARIO)
+            if icon:
+                lbl_icon = tk.Label(btn, image=icon, bg=COLOR_PRIMARIO)
+            else:
+                # Usa emoji si no hay icono
+                emoji = {
+                    'Ingresar Nuevo Cliente': '📝',
+                    'Lista de Clientes': '📋',
+                    'Reportes': '📊',
+                    'Salir': '🚪',
+                }.get(texto, '🔹')
+                lbl_icon = tk.Label(btn, text=emoji, font=('Segoe UI', 18), bg=COLOR_PRIMARIO, fg='white')
+            lbl_icon.pack(side='left', padx=10, pady=8)
+            lbl_texto = tk.Label(btn, text=texto, font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white')
+            lbl_texto.pack(side='left', padx=6)
+            btn.bind('<Enter>', on_enter)
+            btn.bind('<Leave>', on_leave)
+            lbl_icon.bind('<Enter>', on_enter)
+            lbl_icon.bind('<Leave>', on_leave)
+            lbl_texto.bind('<Enter>', on_enter)
+            lbl_texto.bind('<Leave>', on_leave)
+            btn.bind('<Button-1>', lambda e: comando())
+            lbl_icon.bind('<Button-1>', lambda e: comando())
+            lbl_texto.bind('<Button-1>', lambda e: comando())
+            return btn
+        # --- Menú lateral ---
+        crear_boton_menu(self.sidebar, self.icon_nuevo, 'Ingresar Nuevo Cliente', self.mostrar_nuevo_cliente)
+        crear_boton_menu(self.sidebar, self.icon_lista, 'Lista de Clientes', self.mostrar_lista_clientes)
+        crear_boton_menu(self.sidebar, self.icon_reportes, 'Reportes', self.mostrar_reportes)
+        crear_boton_menu(self.sidebar, self.icon_salir, 'Salir', self.destroy)
         # --- Panel central ---
-        self.central_frame = tk.Frame(self, bg='#CDD8FF')
+        self.central_frame = tk.Frame(self, bg=COLOR_SECUNDARIO)
         self.central_frame.pack(side='left', fill='both', expand=True)
         self.mostrar_info_institucional()
 
@@ -809,32 +870,57 @@ class MenuPrincipal(tk.Tk):
 
     def mostrar_info_institucional(self):
         self.limpiar_central()
-        inner = tk.Frame(self.central_frame, bg='#CDD8FF')
-        inner.place(relx=0.5, rely=0.5, anchor='center')
-        tk.Label(inner, text='OFICINA TÉCNICO - JURÍDICA', font=('Arial', 28, 'bold'), bg='#CDD8FF', fg='#00396F').pack(pady=(0, 20))
-        tk.Label(inner, text='¿Qué es?', font=('Arial', 18, 'bold'), bg='#CDD8FF', fg='#00396F').pack(anchor='w')
-        tk.Label(inner, text='La Oficina Técnico-Jurídica es un espacio de atención y asesoría en temas legales y tecnológicos.', font=('Arial', 14), bg='#CDD8FF', wraplength=700, justify='left').pack(anchor='w', pady=(0, 15))
-        tk.Label(inner, text='¿Para qué funciona?', font=('Arial', 18, 'bold'), bg='#CDD8FF', fg='#00396F').pack(anchor='w')
-        tk.Label(inner, text='Brindamos orientación, consultoría y acompañamiento en protección de datos, derecho digital, ciberseguridad, y más.', font=('Arial', 14), bg='#CDD8FF', wraplength=700, justify='left').pack(anchor='w', pady=(0, 15))
-        tk.Label(inner, text='¿A quiénes está dirigido?', font=('Arial', 18, 'bold'), bg='#CDD8FF', fg='#00396F').pack(anchor='w')
-        tk.Label(inner, text='Empresas, emprendedores, profesionales, estudiantes y cualquier persona interesada en el ámbito legal y tecnológico.', font=('Arial', 14), bg='#CDD8FF', wraplength=700, justify='left').pack(anchor='w', pady=(0, 15))
+        # --- Hero institucional ---
+        hero = tk.Frame(self.central_frame, bg=COLOR_TARJETA, bd=0, highlightthickness=0)
+        hero.place(relx=0.5, rely=0.25, anchor='center', relwidth=0.7, relheight=0.32)
+        # Sombra simulada
+        sombra = tk.Frame(self.central_frame, bg='#e0e0e0')
+        sombra.place(relx=0.5, rely=0.25+0.03, anchor='center', relwidth=0.7, relheight=0.32)
+        hero.lift()
+        # Hero visual
+        tk.Label(hero, text='OFICINA TÉCNICO - JURÍDICA', font=FUENTE_TITULO_GRANDE, bg=COLOR_TARJETA, fg=COLOR_PRIMARIO).pack(pady=(30, 10))
+        tk.Label(hero, text='Consultoría y asesoría en derecho digital, ciberseguridad y tecnología', font=FUENTE_CONTENIDO, bg=COLOR_TARJETA, fg='#444', wraplength=700, justify='center').pack(pady=(0, 18))
+        # --- Info institucional debajo del hero ---
+        info = tk.Frame(self.central_frame, bg=COLOR_SECUNDARIO)
+        info.place(relx=0.5, rely=0.60, anchor='center', relwidth=0.8)
+        def seccion(titulo, texto):
+            tk.Label(info, text=titulo, font=FUENTE_TITULO, bg=COLOR_SECUNDARIO, fg=COLOR_PRIMARIO).pack(anchor='w', pady=(10, 0))
+            tk.Label(info, text=texto, font=FUENTE_CONTENIDO, bg=COLOR_SECUNDARIO, fg='#222', wraplength=800, justify='left').pack(anchor='w', pady=(0, 8))
+        seccion('¿Qué es?', 'La Oficina Técnico-Jurídica es un espacio de atención y asesoría en temas legales y tecnológicos.')
+        seccion('¿Para qué funciona?', 'Brindamos orientación, consultoría y acompañamiento en protección de datos, derecho digital, ciberseguridad, y más.')
+        seccion('¿A quiénes está dirigido?', 'Empresas, emprendedores, profesionales, estudiantes y cualquier persona interesada en el ámbito legal y tecnológico.')
 
     def mostrar_nuevo_cliente(self):
         self.limpiar_central()
-        from tkinter import ttk, messagebox
-        labels = ['Nombre', 'Apellido', 'DocumId', 'Email', 'Telefono', 'Nacionalidad', 'Residencia', 'Asunto', 'Estatus']
+        from tkinter import ttk
+        labels = [
+            ('Nombre', True), ('Apellido', True), ('DocumId', True), ('Email', True), ('Telefono', True),
+            ('Nacionalidad', True), ('Residencia', False), ('Asunto', True), ('Estatus', True)
+        ]
         entries = {}
-        inner_frame = tk.Frame(self.central_frame, bg='#CDD8FF')
-        inner_frame.place(relx=0.5, rely=0.5, anchor='center')
-        for idx, label in enumerate(labels):
-            tk.Label(inner_frame, text=label+':', font=('Arial', 15, 'bold'), bg='#CDD8FF').grid(row=idx, column=0, padx=20, pady=14, sticky='e')
+        # --- Tarjeta blanca con sombra ---
+        sombra = tk.Frame(self.central_frame, bg='#e0e0e0')
+        sombra.place(relx=0.5, rely=0.5+0.025, anchor='center', relwidth=0.52, relheight=0.68)
+        card = tk.Frame(self.central_frame, bg=COLOR_TARJETA, bd=0, highlightthickness=0)
+        card.place(relx=0.5, rely=0.5, anchor='center', relwidth=0.52, relheight=0.68)
+        card.lift()
+        # --- Título ---
+        tk.Label(card, text='Nuevo Cliente', font=FUENTE_TITULO, bg=COLOR_TARJETA, fg=COLOR_PRIMARIO).grid(row=0, column=0, columnspan=2, pady=(24, 10))
+        # --- Campos ---
+        for idx, (label, obligatorio) in enumerate(labels):
+            label_text = label + (" *" if obligatorio else "")
+            tk.Label(card, text=label_text, font=FUENTE_LABEL, bg=COLOR_TARJETA, fg=COLOR_PRIMARIO if obligatorio else '#444').grid(row=idx+1, column=0, padx=20, pady=10, sticky='e')
+            style = ttk.Style()
+            style.theme_use('default')
+            style.configure('Modern.TCombobox', relief='flat', borderwidth=1, padding=8, font=FUENTE_CONTENIDO, foreground='#222', background='white', fieldbackground='white')
+            style.map('Modern.TCombobox', fieldbackground=[('readonly', 'white')])
             if label in ['Nacionalidad', 'Asunto', 'Estatus']:
                 if label == 'Nacionalidad':
                     nacionalidades = [
                         'Argentina', 'Bolivia', 'Brasil', 'Chile', 'Colombia', 'Ecuador', 'Paraguay', 'Perú', 'Uruguay', 'Venezuela',
                         'México', 'España', 'Estados Unidos', 'Otro'
                     ]
-                    entry = ttk.Combobox(inner_frame, values=nacionalidades, font=('Arial', 15), width=38)
+                    entry = ttk.Combobox(card, values=nacionalidades, font=FUENTE_CONTENIDO, width=32, style='Modern.TCombobox')
                 elif label == 'Asunto':
                     asuntos = [
                         'Asesoría en Protección de Datos para empresas',
@@ -862,45 +948,177 @@ class MenuPrincipal(tk.Tk):
                         'Vulneración de la intimidad',
                         'Amenazas y extorsiones'
                     ]
-                    entry = ttk.Combobox(inner_frame, values=asuntos, font=('Arial', 15), width=38)
+                    entry = ttk.Combobox(card, values=asuntos, font=FUENTE_CONTENIDO, width=32, style='Modern.TCombobox')
                 else:
                     estatuses = ['Activo', 'En proceso', 'Terminado']
-                    entry = ttk.Combobox(inner_frame, values=estatuses, font=('Arial', 15), width=38, state='readonly')
+                    entry = ttk.Combobox(card, values=estatuses, font=FUENTE_CONTENIDO, width=32, state='readonly', style='Modern.TCombobox')
             else:
-                entry = tk.Entry(inner_frame, font=('Arial', 15), width=40)
-            entry.grid(row=idx, column=1, padx=10, pady=14, sticky='w')
-            entries[label] = entry
-        # --- Botones Guardar y Cancelar centrados ---
-        btns_frame = tk.Frame(inner_frame, bg='#CDD8FF')
-        btns_frame.grid(row=11, column=0, columnspan=2, pady=30)
-        btn_guardar = tk.Button(btns_frame, text='Guardar', font=('Arial', 15, 'bold'), bg='#00396F', fg='#C5EAFE', width=14, command=lambda: guardar())
+                entry = tk.Entry(card, font=FUENTE_CONTENIDO, width=34, relief='flat', highlightthickness=1, highlightbackground='#bbb')
+            entry.grid(row=idx+1, column=1, padx=10, pady=10, sticky='w')
+            entries[label] = (entry, obligatorio)
+        # --- Botones Guardar y Cancelar centrados en la tarjeta ---
+        btns_frame = tk.Frame(card, bg=COLOR_TARJETA)
+        btns_frame.grid(row=len(labels)+2, column=0, columnspan=2, pady=24)
+        btn_guardar = tk.Button(btns_frame, text='Guardar', font=FUENTE_BOTON, bg=COLOR_VERDE, fg='white', width=14, activebackground='#388E3C', command=lambda: guardar())
         btn_guardar.pack(side='left', padx=30)
-        btn_cancelar = tk.Button(btns_frame, text='Cancelar', font=('Arial', 15, 'bold'), bg='#888888', fg='white', width=14, command=self.mostrar_info_institucional)
+        btn_cancelar = tk.Button(btns_frame, text='Cancelar', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', width=14, activebackground='#3A7DBA', command=self.mostrar_info_institucional)
         btn_cancelar.pack(side='left', padx=30)
+        # --- Botones clásicos debajo de la tarjeta (restaurados) ---
+        btns_frame2 = tk.Frame(self.central_frame, bg=COLOR_SECUNDARIO)
+        btns_frame2.place(relx=0.5, rely=0.5+0.38, anchor='center')
+        btn_guardar2 = tk.Button(btns_frame2, text='Guardar', font=FUENTE_BOTON, bg=COLOR_VERDE, fg='white', width=14, activebackground='#388E3C', command=lambda: guardar())
+        btn_guardar2.pack(side='left', padx=30)
+        btn_cancelar2 = tk.Button(btns_frame2, text='Cancelar', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', width=14, activebackground='#3A7DBA', command=self.mostrar_info_institucional)
+        btn_cancelar2.pack(side='left', padx=30)
+        # --- Toast notification helper ---
+        def show_toast(msg, color):
+            toast = tk.Toplevel(self)
+            toast.overrideredirect(True)
+            toast.config(bg=color)
+            toast.attributes('-topmost', True)
+            x = self.winfo_x() + self.winfo_width() - 340
+            y = self.winfo_y() + self.winfo_height() - 100
+            toast.geometry(f"+{x}+{y}")
+            label = tk.Label(toast, text=msg, bg=color, fg='white', font=FUENTE_CONTENIDO)
+            label.pack(padx=10, pady=5)
+            toast.after(3000, toast.destroy)
+        # --- Guardar cliente ---
         def guardar():
-            from model.clienteDao import Persona, guardarDatoCliente
-            datos = [entries[l].get() for l in labels]
-            if not all(datos):
-                messagebox.showwarning('Campos requeridos', 'Debe completar todos los campos.')
-                return
-            persona = Persona(*datos)
-            guardarDatoCliente(persona)
-            messagebox.showinfo('Éxito', 'Cliente registrado correctamente.')
-            self.mostrar_info_institucional()
+            # Validar campos obligatorios
+            for key, (entry, obligatorio) in entries.items():
+                if obligatorio and not entry.get():
+                    entry.focus()
+                    messagebox.showwarning('Campo obligatorio', f'El campo "{key}" es obligatorio.')
+                    return
+            try:
+                persona = Persona(
+                    entries['Nombre'][0].get(),
+                    entries['Apellido'][0].get(),
+                    entries['DocumId'][0].get(),
+                    entries['Email'][0].get(),
+                    entries['Telefono'][0].get(),
+                    entries['Nacionalidad'][0].get(),
+                    entries['Residencia'][0].get(),
+                    entries['Asunto'][0].get(),
+                    entries['Estatus'][0].get()
+                )
+                guardarDatoCliente(persona)
+                show_toast('Cliente guardado con éxito.', COLOR_VERDE)
+                self.mostrar_info_institucional()
+            except Exception as e:
+                messagebox.showerror('Error al guardar', str(e))
 
     def mostrar_lista_clientes(self):
         self.limpiar_central()
-        frame = Frame(self.central_frame)
-        frame.pack(fill='both', expand=True)
-        frame.tablaCliente()
+        from tkinter import ttk
+        card = tk.Frame(self.central_frame, bg=COLOR_TARJETA, bd=0, highlightthickness=0)
+        card.place(relx=0.5, rely=0.5, anchor='center', relwidth=0.92, relheight=0.82)
+        card.lift()
+        # Título
+        tk.Label(card, text='Lista de Clientes', font=FUENTE_TITULO, bg=COLOR_TARJETA, fg=COLOR_PRIMARIO).pack(pady=(18, 8))
+        # Tabla
+        columnas = ("Id", "Nombre", "Apellido", "DocumId", "Email", "Telefono", "Nacionalidad", "Residencia", "Asunto", "Estatus")
+        tree = ttk.Treeview(card, columns=columnas, show="headings")
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('Treeview', font=FUENTE_CONTENIDO, rowheight=28, background=COLOR_TARJETA, fieldbackground=COLOR_TARJETA)
+        style.configure('Treeview.Heading', font=FUENTE_LABEL, background=COLOR_PRIMARIO, foreground='white')
+        for col in columnas:
+            tree.heading(col, text=col)
+            tree.column(col, width=100)
+        tree.pack(fill='both', expand=True, padx=18, pady=10)
+        # Llenar datos
+        from model.clienteDao import listar
+        for c in listar():
+            estado_tag = 'activo' if c[9] == 'Activo' else 'inactivo'
+            tree.insert('', 'end', values=(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9]), tags=(estado_tag,))
+        # --- Botones clásicos debajo de la tabla ---
+        btns_frame = tk.Frame(card, bg=COLOR_TARJETA)
+        btns_frame.pack(pady=10)
+        btn_editar = tk.Button(btns_frame, text='Editar Cliente', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', width=15, activebackground='#3A7DBA', command=lambda: self._editar_cliente_tabla(tree))
+        btn_editar.pack(side='left', padx=10)
+        btn_eliminar = tk.Button(btns_frame, text='Eliminar Cliente', font=FUENTE_BOTON, bg=COLOR_ROJO, fg='white', width=15, activebackground='#B71C1C', command=lambda: self._eliminar_cliente_tabla(tree))
+        btn_eliminar.pack(side='left', padx=10)
+        btn_historial = tk.Button(btns_frame, text='Historia Cliente', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', width=15, activebackground='#3A7DBA', command=lambda: self._historial_cliente_tabla(tree))
+        btn_historial.pack(side='left', padx=10)
+        btn_volver = tk.Button(btns_frame, text='Volver', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', width=15, activebackground='#3A7DBA', command=self.mostrar_info_institucional)
+        btn_volver.pack(side='left', padx=10)
+
+    def _editar_cliente_tabla(self, tree):
+        seleccionado = tree.focus()
+        if not seleccionado:
+            messagebox.showwarning('Editar Cliente', 'Seleccione un cliente de la tabla.')
+            return
+        valores = tree.item(seleccionado, 'values')
+        if not valores or len(valores) < 10:
+            messagebox.showerror('Editar Cliente', 'No se pudieron obtener los datos del cliente seleccionado.')
+            return
+        # Lógica: cargar datos en el formulario de edición
+        self.mostrar_nuevo_cliente()
+        # Rellenar los campos del formulario con los valores seleccionados
+        # ...existing code for rellenar campos si es necesario...
+
+    def _eliminar_cliente_tabla(self, tree):
+        seleccionado = tree.focus()
+        if not seleccionado:
+            messagebox.showwarning('Eliminar Cliente', 'Seleccione un cliente de la tabla.')
+            return
+        valores = tree.item(seleccionado, 'values')
+        respuesta = messagebox.askyesno('Eliminar Cliente', f'¿Está seguro de eliminar al cliente {valores[1]} {valores[2]}?')
+        if respuesta:
+            from model.clienteDao import eliminarCliente
+            eliminarCliente(valores[0])
+            self.mostrar_lista_clientes()
+
+    def _historial_cliente_tabla(self, tree):
+        seleccionado = tree.focus()
+        if not seleccionado:
+            messagebox.showwarning('Historia Cliente', 'Seleccione un cliente de la tabla.')
+            return
+        valores = tree.item(seleccionado, 'values')
+        id_cliente = valores[0]
+        # Reutilizar la ventana de historial clásica
+        self.abrirHistoriaCliente_tabla(id_cliente, valores)
+
+    def abrirHistoriaCliente_tabla(self, id_cliente, valores):
+        ventana = Toplevel(self)
+        ventana.title(f'Historia de {valores[1]} {valores[2]}')
+        ventana.geometry('900x500')
+        ventana.config(bg=COLOR_SECUNDARIO)
+        from model.historiaConsultaDao import listarHistoria
+        tree = ttk.Treeview(ventana, columns=("Id", "Nombre y Apellido", "Atendido por", "Observaciones", "Fecha"), show="headings")
+        tree.heading("Id", text="Id")
+        tree.heading("Nombre y Apellido", text="Nombre y Apellido")
+        tree.heading("Atendido por", text="Atendido por")
+        tree.heading("Observaciones", text="Observaciones")
+        tree.heading("Fecha", text="Fecha de registro")
+        tree.column("Id", width=60)
+        tree.column("Nombre y Apellido", width=180)
+        tree.column("Atendido por", width=180)
+        tree.column("Observaciones", width=400)
+        tree.column("Fecha", width=120)
+        tree.pack(fill='both', expand=True)
+        # Botón salir
+        btn_salir = tk.Button(ventana, text='Salir', font=FUENTE_BOTON, bg=COLOR_PRIMARIO, fg='white', width=12, activebackground='#3A7DBA', command=ventana.destroy)
+        btn_salir.pack(pady=10)
+        # Llenar tabla
+        historias = listarHistoria(id_cliente)
+        for h in historias:
+            if len(h) > 4:
+                tree.insert('', 'end', values=(h[0], h[1], h[2], h[3], h[4]))
+            else:
+                tree.insert('', 'end', values=(h[0], h[1], h[2], h[3], h[4] if len(h) > 3 else ''))
 
     def mostrar_reportes(self):
         self.limpiar_central()
-        frame = Frame(self.central_frame)
-        frame.pack(fill='both', expand=True)
-        frame.ventanaReportes()
-
-# Cambiar el flujo de inicio para mostrar el menú principal
-if __name__ == '__main__':
-    menu = MenuPrincipal()
-    menu.mainloop()
+        # Crear un frame temporal para alojar la ventana de reportes
+        frame_reportes = tk.Frame(self.central_frame, bg=COLOR_SECUNDARIO)
+        frame_reportes.pack(fill='both', expand=True)
+        # Instanciar el Frame de reportes clásico y mostrarlo en el panel central
+        # Reutiliza la lógica de ventanaReportes de Frame
+        try:
+            frame_temp = Frame(frame_reportes)
+            frame_temp.pack(fill='both', expand=True)
+            frame_temp.ventanaReportes()
+        except Exception as e:
+            tk.Label(frame_reportes, text=f'Error al mostrar reportes: {e}', fg='red', bg=COLOR_SECUNDARIO).pack(pady=30)
